@@ -1,18 +1,18 @@
-// app/callback/page.tsx
 'use client';
 
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function CallbackPage() {
+// Create a separate component for the content that uses useSearchParams
+function CallbackContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const code = searchParams.get('code');
 
     useEffect(() => {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';;
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
         const exchangeToken = async () => {
-
             try {
                 // Call your EXPRESS BACKEND directly
                 const response = await fetch(`${backendUrl}/api/auth/github`, {
@@ -43,12 +43,27 @@ export default function CallbackPage() {
     }, [code, router]);
 
     return (
-
         <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
                 <p className="mt-4 text-gray-600">Authenticating with GitHub...</p>
             </div>
         </div>
+    );
+}
+
+// Main component with Suspense boundary
+export default function CallbackPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading authentication...</p>
+                </div>
+            </div>
+        }>
+            <CallbackContent />
+        </Suspense>
     );
 }

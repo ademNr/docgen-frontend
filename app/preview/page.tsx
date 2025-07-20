@@ -8,7 +8,8 @@ import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'next/navigation';
 import saveAs from 'file-saver';
 
-export default function PreviewPage() {
+// Create a separate component for the content that uses useSearchParams
+function PreviewPageContent() {
     const [copied, setCopied] = useState(false);
     const [documentation, setDocumentation] = useState<Documentation | null>(null);
     const [loading, setLoading] = useState(true);
@@ -128,7 +129,6 @@ export default function PreviewPage() {
     };
 
     const generateMarkdown = (): string => {
-        // Add null check before destructuring
         if (!documentation) {
             return '# Documentation\n\nNo documentation available.';
         }
@@ -212,7 +212,6 @@ export default function PreviewPage() {
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error('Failed to copy text: ', err);
-            // Fallback for older browsers
             const textArea = document.createElement('textarea');
             textArea.value = generateMarkdown();
             document.body.appendChild(textArea);
@@ -223,7 +222,6 @@ export default function PreviewPage() {
             setTimeout(() => setCopied(false), 2000);
         }
     };
-
 
     // Update the useEffect hook for fetching documentation
     useEffect(() => {
@@ -452,150 +450,161 @@ export default function PreviewPage() {
     if (error) return <ErrorComponent />;
 
     return (
-        <Suspense fallback={<LoadingComponent />}>
-            <ProtectedRoute>
-                <div className="min-h-screen bg-slate-900 relative overflow-hidden" onMouseMove={handleMouseMove}>
-                    <canvas ref={canvasRef} className="absolute inset-0 z-0" />
+        <div className="min-h-screen bg-slate-900 relative overflow-hidden" onMouseMove={handleMouseMove}>
+            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
-                    {/* Dynamic background orbs */}
-                    <div className="absolute inset-0 z-10">
-                        <div
-                            className="absolute w-96 h-96 rounded-full opacity-5 blur-3xl transition-all duration-1000"
-                            style={{
-                                background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                                transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
-                                left: '10%',
-                                top: '10%',
-                            }}
-                        />
-                        <div
-                            className="absolute w-80 h-80 rounded-full opacity-5 blur-3xl transition-all duration-1000"
-                            style={{
-                                background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                                transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -25}px)`,
-                                right: '10%',
-                                bottom: '10%',
-                            }}
-                        />
-                    </div>
+            {/* Dynamic background orbs */}
+            <div className="absolute inset-0 z-10">
+                <div
+                    className="absolute w-96 h-96 rounded-full opacity-5 blur-3xl transition-all duration-1000"
+                    style={{
+                        background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
+                        transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
+                        left: '10%',
+                        top: '10%',
+                    }}
+                />
+                <div
+                    className="absolute w-80 h-80 rounded-full opacity-5 blur-3xl transition-all duration-1000"
+                    style={{
+                        background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
+                        transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -25}px)`,
+                        right: '10%',
+                        bottom: '10%',
+                    }}
+                />
+            </div>
 
-                    <div className="relative z-20 py-8 px-4">
-                        <div className="max-w-7xl mx-auto">
-                            {documentation ? (
-                                <>
-                                    {/* Enhanced Header */}
-                                    <div className="mb-8">
-                                        <div className="   p-8 ">
-                                            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                                                <div>
-                                                    <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-pink-400 mb-2">
-                                                        Documentation Generated! 🎉
-                                                    </h1>
-                                                    <p className="text-gray-300 text-lg">
-                                                        Repository: <span className="font-mono text-purple-300">{repoFullName}</span>
-                                                    </p>
-                                                </div>
+            <div className="relative z-20 py-8 px-4">
+                <div className="max-w-7xl mx-auto">
+                    {documentation ? (
+                        <>
+                            {/* Enhanced Header */}
+                            <div className="mb-8">
+                                <div className="   p-8 ">
+                                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                                        <div>
+                                            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-pink-400 mb-2">
+                                                Documentation Generated! 🎉
+                                            </h1>
+                                            <p className="text-gray-300 text-lg">
+                                                Repository: <span className="font-mono text-purple-300">{repoFullName}</span>
+                                            </p>
+                                        </div>
 
-                                                <div className="flex flex-col sm:flex-row gap-4">
-                                                    {/* Copy Button */}
-                                                    <button
-                                                        onClick={handleCopy}
-                                                        className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden"
-                                                        style={{
-                                                            background: copySuccess
-                                                                ? 'linear-gradient(45deg, #10b981, #059669)'
-                                                                : 'linear-gradient(45deg, #06b6d4, #0891b2)',
-                                                            boxShadow: '0 10px 30px rgba(6, 182, 212, 0.3)',
-                                                        }}
-                                                    >
-                                                        <div className="flex items-center space-x-2 relative z-10">
-                                                            {copySuccess ? (
-                                                                <>
-                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                    </svg>
-                                                                    <span>Copied!</span>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                                    </svg>
-                                                                    <span>Copy</span>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                                    </button>
-
-                                                    {/* Download Button */}
-                                                    <button
-                                                        onClick={downloadMarkdown}
-                                                        disabled={downloadProgress > 0 && downloadProgress < 100}
-                                                        className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden disabled:opacity-50"
-                                                        style={{
-                                                            background: 'linear-gradient(45deg, #8b5cf6, #ec4899)',
-                                                            boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)',
-                                                        }}
-                                                    >
-                                                        <div className="flex items-center space-x-2 relative z-10">
-                                                            {downloadProgress > 0 && downloadProgress < 100 ? (
-                                                                <>
-                                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                                    <span>{downloadProgress}%</span>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                                    </svg>
-                                                                    <span>Download</span>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                                    </button>
-
-                                                    {/* Back Button */}
-                                                    <a
-                                                        href="/repos"
-                                                        className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden"
-                                                        style={{
-                                                            background: 'linear-gradient(45deg, #64748b, #475569)',
-                                                            boxShadow: '0 10px 30px rgba(100, 116, 139, 0.3)',
-                                                        }}
-                                                    >
-                                                        <div className="flex items-center space-x-2 relative z-10">
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            {/* Copy Button */}
+                                            <button
+                                                onClick={handleCopy}
+                                                className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden"
+                                                style={{
+                                                    background: copySuccess
+                                                        ? 'linear-gradient(45deg, #10b981, #059669)'
+                                                        : 'linear-gradient(45deg, #06b6d4, #0891b2)',
+                                                    boxShadow: '0 10px 30px rgba(6, 182, 212, 0.3)',
+                                                }}
+                                            >
+                                                <div className="flex items-center space-x-2 relative z-10">
+                                                    {copySuccess ? (
+                                                        <>
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                             </svg>
-                                                            <span>Back to Repos</span>
-                                                        </div>
-                                                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                                    </a>
+                                                            <span>Copied!</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                            </svg>
+                                                            <span>Copy</span>
+                                                        </>
+                                                    )}
                                                 </div>
-                                            </div>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                                            </button>
+
+                                            {/* Download Button */}
+                                            <button
+                                                onClick={downloadMarkdown}
+                                                disabled={downloadProgress > 0 && downloadProgress < 100}
+                                                className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden disabled:opacity-50"
+                                                style={{
+                                                    background: 'linear-gradient(45deg, #8b5cf6, #ec4899)',
+                                                    boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)',
+                                                }}
+                                            >
+                                                <div className="flex items-center space-x-2 relative z-10">
+                                                    {downloadProgress > 0 && downloadProgress < 100 ? (
+                                                        <>
+                                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                            <span>{downloadProgress}%</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                            <span>Download</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                                            </button>
+
+                                            {/* Back Button */}
+                                            <a
+                                                href="/repos"
+                                                className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden"
+                                                style={{
+                                                    background: 'linear-gradient(45deg, #64748b, #475569)',
+                                                    boxShadow: '0 10px 30px rgba(100, 116, 139, 0.3)',
+                                                }}
+                                            >
+                                                <div className="flex items-center space-x-2 relative z-10">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                    </svg>
+                                                    <span>Back to Repos</span>
+                                                </div>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                                            </a>
                                         </div>
                                     </div>
-
-                                    {/* Documentation Content */}
-                                    <div className="overflow-hidden ">
-                                        <ReadmePreview documentation={documentation} />
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="flex justify-center items-center min-h-[60vh]">
-                                    <div className="text-center">
-                                        <div className="text-6xl mb-4">📄</div>
-                                        <h3 className="text-2xl font-bold text-white mb-4">No documentation found</h3>
-                                        <p className="text-gray-400">Something went wrong during generation</p>
-                                    </div>
                                 </div>
-                            )}
+                            </div>
+
+                            {/* Documentation Content */}
+                            <div className="overflow-hidden ">
+                                <ReadmePreview documentation={documentation} />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex justify-center items-center min-h-[60vh]">
+                            <div className="text-center">
+                                <div className="text-6xl mb-4">📄</div>
+                                <h3 className="text-2xl font-bold text-white mb-4">No documentation found</h3>
+                                <p className="text-gray-400">Something went wrong during generation</p>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
-            </ProtectedRoute>
-        </Suspense >
+            </div>
+        </div>
+    );
+}
+
+// Create a wrapper component with Suspense
+export default function PreviewPage() {
+    return (
+        <ProtectedRoute>
+            <Suspense fallback={
+                <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                    <div className="text-white text-2xl">Loading repository information...</div>
+                </div>
+            }>
+                <PreviewPageContent />
+            </Suspense>
+        </ProtectedRoute>
     );
 }
