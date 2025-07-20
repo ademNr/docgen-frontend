@@ -30,7 +30,7 @@ function CallbackContent() {
                 const data = await response.json();
                 // Save token to localStorage
                 localStorage.setItem('github_token', data.token);
-                router.push('/preview');
+                router.push('/repos');
             } catch (error) {
                 console.error('Authentication error:', error);
                 router.push('/login?error=auth_failed');
