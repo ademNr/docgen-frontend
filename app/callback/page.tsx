@@ -1,0 +1,54 @@
+// app/callback/page.tsx
+'use client';
+
+import { useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+
+export default function CallbackPage() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const code = searchParams.get('code');
+
+    useEffect(() => {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';;
+        const exchangeToken = async () => {
+
+            try {
+                // Call your EXPRESS BACKEND directly
+                const response = await fetch(`${backendUrl}/api/auth/github`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token exchange failed');
+                }
+
+                const data = await response.json();
+                // Save token to localStorage
+                localStorage.setItem('github_token', data.token);
+                router.push('/preview');
+            } catch (error) {
+                console.error('Authentication error:', error);
+                router.push('/login?error=auth_failed');
+            }
+        };
+
+        if (code) {
+            exchangeToken();
+        }
+    }, [code, router]);
+
+    return (
+
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Authenticating with GitHub...</p>
+            </div>
+        </div>
+    );
+}
