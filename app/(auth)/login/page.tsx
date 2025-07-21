@@ -269,17 +269,17 @@ export default function LoginPage() {
                             </button>
                         </div>
 
-                        {/* Enhanced Social Proof */}
-                        <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto animate-fade-in-up animation-delay-1000">
+                        {/* Enhanced Social Proof - Responsive */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto animate-fade-in-up animation-delay-1000 px-4 sm:px-6">
                             {/* Developer Card */}
                             <div className="text-center group relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative bg-gradient-to-br bg-slate-900  rounded-2xl p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-purple-500/50 group-hover:shadow-xl group-hover:shadow-purple-500/20">
-                                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-400 to-purple-500 mb-2">
+                                <div className="relative bg-slate-900 rounded-2xl p-4 sm:p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-purple-500/50 group-hover:shadow-xl group-hover:shadow-purple-500/20 border border-slate-800/50">
+                                    <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-400 to-purple-500 mb-2 relative">
                                         2.5K+
                                         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-purple-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full animate-pulse-slow"></div>
                                     </div>
-                                    <div className="text-sm font-medium bg-gradient-to-r from-purple-400/60 to-purple-300/80 text-transparent bg-clip-text group-hover:from-purple-300 group-hover:to-purple-200 transition-all">
+                                    <div className="text-xs sm:text-sm font-medium bg-gradient-to-r from-purple-400/60 to-purple-300/80 text-transparent bg-clip-text group-hover:from-purple-300 group-hover:to-purple-200 transition-all">
                                         Developers
                                     </div>
                                 </div>
@@ -288,12 +288,12 @@ export default function LoginPage() {
                             {/* Docs Card */}
                             <div className="text-center group relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative bg-gradient-to-br bg-slate-900   rounded-2xl p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-blue-400/50 group-hover:shadow-xl group-hover:shadow-cyan-500/20">
-                                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-sky-500 mb-2">
+                                <div className="relative bg-slate-900 rounded-2xl p-4 sm:p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-blue-400/50 group-hover:shadow-xl group-hover:shadow-cyan-500/20 border border-slate-800/50">
+                                    <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-sky-500 mb-2 relative">
                                         5.8K+
                                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 to-cyan-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full animate-pulse-slow"></div>
                                     </div>
-                                    <div className="text-sm font-medium bg-gradient-to-r from-cyan-400/60 to-blue-300/80 text-transparent bg-clip-text group-hover:from-cyan-300 group-hover:to-blue-200 transition-all">
+                                    <div className="text-xs sm:text-sm font-medium bg-gradient-to-r from-cyan-400/60 to-blue-300/80 text-transparent bg-clip-text group-hover:from-cyan-300 group-hover:to-blue-200 transition-all">
                                         Docs Created
                                     </div>
                                 </div>
@@ -302,12 +302,12 @@ export default function LoginPage() {
                             {/* Uptime Card */}
                             <div className="text-center group relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative bg-gradient-to-br bg-slate-900 rounded-2xl p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-emerald-400/50 group-hover:shadow-xl group-hover:shadow-emerald-500/20">
-                                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-400 to-emerald-500 mb-2">
+                                <div className="relative bg-slate-900 rounded-2xl p-4 sm:p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-emerald-400/50 group-hover:shadow-xl group-hover:shadow-emerald-500/20 border border-slate-800/50">
+                                    <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-400 to-emerald-500 mb-2 relative">
                                         99.9%
                                         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 to-emerald-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full animate-pulse-slow"></div>
                                     </div>
-                                    <div className="text-sm font-medium bg-gradient-to-r from-emerald-400/60 to-green-300/80 text-transparent bg-clip-text group-hover:from-emerald-300 group-hover:to-green-200 transition-all">
+                                    <div className="text-xs sm:text-sm font-medium bg-gradient-to-r from-emerald-400/60 to-green-300/80 text-transparent bg-clip-text group-hover:from-emerald-300 group-hover:to-green-200 transition-all">
                                         Uptime
                                     </div>
                                 </div>

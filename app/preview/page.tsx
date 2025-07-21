@@ -384,123 +384,121 @@ function PreviewPageContent() {
                 </div>
             </div>
 
-            {/* Enhanced Header */}
-            <div className="fixed top-0 left-0 right-0 z-30 backdrop-blur-md border-b border-white/10 bg-slate-900/80 py-4 px-6">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Responsive Header */}
+            <div className="fixed top-0 left-0 right-0 z-30 backdrop-blur-md border-b border-white/10 bg-slate-900/80 py-3 sm:py-4 px-4 sm:px-6">
+                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                            <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
                         <div>
-                            <h1 className="text-lg font-bold text-white">Documentation Preview</h1>
-                            <p className="text-sm text-slate-300 truncate max-w-xs md:max-w-md">
+                            <h1 className="text-base sm:text-lg font-bold text-white">Documentation Preview</h1>
+                            <p className="text-xs sm:text-sm text-slate-300 truncate max-w-[180px] sm:max-w-md">
                                 {repoFullName}
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
-                        {/* Copy Button with improved feedback */}
+                    <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto justify-end">
+                        {/* Responsive Buttons */}
                         <button
                             onClick={handleCopy}
-                            className="group relative px-4 py-2 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden"
+                            className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm"
                             style={{
                                 background: copySuccess
                                     ? 'linear-gradient(45deg, #10b981, #059669)'
                                     : 'linear-gradient(45deg, #0ea5e9, #0284c7)',
                             }}
                         >
-                            <div className="flex items-center space-x-2 relative z-10">
+                            <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
                                 {copySuccess ? (
                                     <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
                                         <span>Copied!</span>
                                     </>
                                 ) : (
                                     <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                         </svg>
-                                        <span>Copy README</span>
+                                        <span className="hidden sm:inline">Copy README</span>
+                                        <span className="sm:hidden">Copy</span>
                                     </>
                                 )}
                             </div>
-
-                            {/* Animated confirmation overlay */}
                             {copySuccess && (
                                 <div className="absolute inset-0 bg-green-500/20 backdrop-blur-sm flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-white animate-checkmark" viewBox="0 0 24 24">
+                                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white animate-checkmark" viewBox="0 0 24 24">
                                         <path fill="none" stroke="currentColor" strokeWidth="2" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                             )}
                         </button>
 
-                        {/* Download Button with clearer labeling */}
                         <button
                             onClick={downloadMarkdown}
                             disabled={downloadProgress > 0 && downloadProgress < 100}
-                            className="group relative px-4 py-2 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden disabled:opacity-70"
+                            className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm disabled:opacity-70"
                             style={{
                                 background: 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
                             }}
                         >
-                            <div className="flex items-center space-x-2 relative z-10">
+                            <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
                                 {downloadProgress > 0 && downloadProgress < 100 ? (
                                     <>
-                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                         <span>{downloadProgress}%</span>
                                     </>
                                 ) : (
                                     <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        <span>Download README.md</span>
+                                        <span className="hidden sm:inline">Download</span>
+                                        <span className="sm:hidden">DL</span>
                                     </>
                                 )}
                             </div>
                         </button>
 
-                        {/* Back Button */}
                         <a
                             href="/repos"
-                            className="group relative px-4 py-2 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden"
+                            className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm"
                             style={{
                                 background: 'linear-gradient(45deg, #475569, #334155)',
                             }}
                         >
-                            <div className="flex items-center space-x-2 relative z-10">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
-                                <span>Back to Repos</span>
+                                <span>Back</span>
                             </div>
                         </a>
                     </div>
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div className="relative z-20 pt-24 pb-8 px-4">
+            {/* Responsive Content Area */}
+            <div className="relative z-20 pt-20 sm:pt-24 pb-8 px-4">
                 <div className="max-w-7xl mx-auto">
                     {documentation ? (
                         <div className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-xl overflow-hidden">
-                            <div className="p-6 border-b border-slate-700/50">
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div className="p-4 sm:p-6 border-b border-slate-700/50">
+                                <div className="flex flex-col gap-3 sm:gap-4">
                                     <div>
-                                        <h1 className="text-2xl font-bold text-white mb-1">
+                                        <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">
                                             {documentation.title || "Project Documentation"}
                                         </h1>
-                                        <p className="text-slate-300">
+                                        <p className="text-sm sm:text-base text-slate-300">
                                             {documentation.tagline || "AI-generated documentation"}
                                         </p>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-wrap gap-2">
                                         {documentation.badges.slice(0, 3).map((badge, index) => (
                                             <span
                                                 key={index}
@@ -518,14 +516,29 @@ function PreviewPageContent() {
                                 </div>
                             </div>
 
-                            <div className="flex min-h-screen">
-                                <DocNavigation
-                                    activeTab={activeTab}
-                                    setActiveTab={setActiveTab}
-                                    bestPractices={documentation.bestPractices}
-                                />
+                            <div className="flex flex-col md:flex-row min-h-[calc(100vh-200px)]">
+                                {/* Mobile-friendly navigation toggle */}
+                                <div className="md:hidden p-3 border-b border-slate-700/50">
+                                    <select
+                                        value={activeTab}
+                                        onChange={(e) => setActiveTab(e.target.value)}
+                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white"
+                                    >
+                                        <option value="readme">README</option>
+                                        <option value="bestPractices">Best Practices</option>
+                                    </select>
+                                </div>
 
-                                <div className="flex-1 overflow-y-auto">
+                                {/* Desktop navigation */}
+                                <div className="hidden md:block">
+                                    <DocNavigation
+                                        activeTab={activeTab}
+                                        setActiveTab={setActiveTab}
+                                        bestPractices={documentation.bestPractices}
+                                    />
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                                     {activeTab === 'readme' ? (
                                         <ReadmePreview documentation={documentation!} />
                                     ) : (
@@ -542,19 +555,19 @@ function PreviewPageContent() {
                         </div>
                     ) : (
                         <div className="flex justify-center items-center min-h-[60vh]">
-                            <div className="text-center">
-                                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="text-center px-4">
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-4">No documentation found</h3>
-                                <p className="text-slate-400 max-w-md mx-auto">
-                                    We couldn&apos;t generate documentation for this repository. Please try again.
+                                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">No documentation found</h3>
+                                <p className="text-sm sm:text-base text-slate-400 max-w-md mx-auto">
+                                    We couldn't generate documentation for this repository. Please try again.
                                 </p>
                                 <button
                                     onClick={() => window.location.reload()}
-                                    className="mt-6 px-6 py-3 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105"
+                                    className="mt-4 sm:mt-6 px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base"
                                     style={{
                                         background: 'linear-gradient(45deg, #0ea5e9, #0284c7)',
                                     }}
@@ -567,63 +580,27 @@ function PreviewPageContent() {
                 </div>
             </div>
 
-            {/* Success Toast */}
+            {/* Responsive Toast */}
             {copied && (
-                <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
-                    <div className="bg-green-500/90 backdrop-blur-sm text-white px-6 py-4 rounded-xl shadow-lg flex items-center space-x-3">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 animate-slide-up">
+                    <div className="bg-green-500/90 backdrop-blur-sm text-white px-4 py-3 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl shadow-lg flex items-center space-x-2 sm:space-x-3 text-sm sm:text-base">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span>README copied to clipboard!</span>
+                        <span>Copied to clipboard!</span>
                     </div>
                 </div>
             )}
-
-            {/* Custom Styles */}
-            <style jsx>{`
-                @keyframes animate-slide-up {
-                    0% {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    100% {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                .animate-slide-up {
-                    animation: animate-slide-up 0.3s ease-out forwards;
-                }
-                
-                @keyframes animate-checkmark {
-                    0% {
-                        stroke-dashoffset: 100;
-                        opacity: 0;
-                    }
-                    100% {
-                        stroke-dashoffset: 0;
-                        opacity: 1;
-                    }
-                }
-                
-                .animate-checkmark path {
-                    stroke-dasharray: 100;
-                    stroke-dashoffset: 100;
-                    animation: animate-checkmark 0.5s ease-out forwards;
-                }
-            `}</style>
         </div>
     );
 }
 
-// Create a wrapper component with Suspense
 export default function PreviewPage() {
     return (
         <ProtectedRoute>
             <Suspense fallback={
                 <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-                    <div className="text-white text-2xl">Loading repository information...</div>
+                    <div className="text-white text-lg sm:text-2xl">Loading repository information...</div>
                 </div>
             }>
                 <PreviewPageContent />
