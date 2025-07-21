@@ -563,7 +563,7 @@ function PreviewPageContent() {
                                 </div>
                                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">No documentation found</h3>
                                 <p className="text-sm sm:text-base text-slate-400 max-w-md mx-auto">
-                                    We couldn't generate documentation for this repository. Please try again.
+                                    We couldn&apos;t generate documentation for this repository. Please try again.
                                 </p>
                                 <button
                                     onClick={() => window.location.reload()}
