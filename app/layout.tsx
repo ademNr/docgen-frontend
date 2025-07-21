@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'GitForje',
-  description: 'Formation gratuite en marketing digital et entrepreneuriat',
+  description: 'Transform your GitHub repositories into stunning documentation that developers love to read',
   icons: {
     icon: '/favicon.ico',
   },
