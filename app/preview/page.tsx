@@ -139,18 +139,34 @@ function PreviewPageContent() {
 
         const { title, description, tagline, badges, features, techStack, installation, usage, api, fileStructure, contributing, license, author } = documentation;
 
+        // Helper function to encode badge text as per shield.io rules
+        const encodeBadgeText = (text: string): string => {
+            return text
+                .replace(/-/g, '--')
+                .replace(/_/g, '__')
+                .replace(/ /g, '_');
+        };
+
         return `
-    # ${title}
-    
-    > ${tagline}
-    
-    ${badges.map(b => `![${b.label}](https://img.shields.io/badge/${b.label}-${b.status}-${b.color})`).join(' ')}
-    
-    ## 📝 Description
-    ${description}
-    
-    ## ✨ Features
-    ${features.map(f => `- ${f}`).join('\n')}
+# ${title}
+
+> ${tagline}
+
+${badges.map(b => {
+            const label = encodeBadgeText(b.label);
+            const status = encodeBadgeText(b.status);
+            let color = b.color;
+            if (color.startsWith('#')) {
+                color = color.substring(1);
+            }
+            return `![${b.label}](https://img.shields.io/badge/${label}-${status}-${color})`;
+        }).join(' ')}
+
+## 📝 Description
+${description}
+
+## ✨ Features
+${features.map(f => `- ${f}`).join('\n')}
     
     ## 🛠️ Tech Stack
     ${techStack.map(tech => `- ${tech.name}`).join('\n')}
