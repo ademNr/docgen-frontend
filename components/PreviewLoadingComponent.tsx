@@ -24,12 +24,17 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
     }>>([]);
 
     const tips = [
-        "Analyzing repository structure...",
-        "Generating documentation templates...",
-        "Optimizing content for readability...",
-        "Creating visual diagrams...",
-        "Finalizing documentation pages...",
-        "Almost done..."
+        "🔍 Scanning repository structure...",
+        "📂 Indexing project files and dependencies...",
+        "📝 Generating documentation template...",
+        "✨ Auto-generating code examples and usage snippets...",
+        "🛠  Analyzing code patterns and relationships...",
+        "📚 Organizing content into sections...",
+        "🎨 Applying your styling to documentation...",
+        "🔗 Cross-linking related components and APIs...",
+        "✅ Finalizing interactive documentation pages...",
+        "📦 Packaging documentation for export...",
+        "🚀 Documentation ready! Applying finishing touches..."
     ];
     const [currentTip, setCurrentTip] = useState(0);
 
