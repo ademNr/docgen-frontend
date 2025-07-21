@@ -7,11 +7,14 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'next/navigation';
 import saveAs from 'file-saver';
+import PreviewLoadingComponent from '@/components/PreviewLoadingComponent';
+import BestPracticesView from '@/components/BestPractices';
+import DocNavigation from '@/components/DocNavigation';
 
 // Create a separate component for the content that uses useSearchParams
 function PreviewPageContent() {
     const [copied, setCopied] = useState(false);
-    const [documentation, setDocumentation] = useState<Documentation | null>(null);
+    const [documentation, setDocumentation] = useState<Documentation>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState(0);
@@ -24,6 +27,7 @@ function PreviewPageContent() {
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [activeTab, setActiveTab] = useState<string>('readme');
     const [particles, setParticles] = useState<Array<{
         x: number;
         y: number;
@@ -297,115 +301,6 @@ function PreviewPageContent() {
         }
     }, [token, repoFullName]);
 
-    const LoadingComponent = () => (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden" onMouseMove={handleMouseMove}>
-            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
-
-            {/* Dynamic background orbs */}
-            <div className="absolute inset-0 z-10">
-                <div
-                    className="absolute w-96 h-96 rounded-full opacity-20 blur-3xl transition-all duration-1000"
-                    style={{
-                        background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 30}px)`,
-                        left: '20%',
-                        top: '20%',
-                    }}
-                />
-                <div
-                    className="absolute w-80 h-80 rounded-full opacity-20 blur-3xl transition-all duration-1000"
-                    style={{
-                        background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * -20}px, ${mousePos.y * -30}px)`,
-                        right: '20%',
-                        bottom: '20%',
-                    }}
-                />
-            </div>
-
-            <div className="relative z-20 w-full max-w-2xl px-4">
-                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-12 shadow-2xl">
-                    {/* Header with animated icon */}
-                    <div className="text-center mb-8">
-                        <div className="relative inline-block mb-6">
-                            <div className="w-24 h-24 mx-auto relative">
-                                {/* Rotating rings */}
-                                <div className="absolute inset-0 border-4 border-purple-500/30 rounded-full animate-spin"></div>
-                                <div className="absolute inset-2 border-4 border-pink-500/50 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '3s' }}></div>
-                                <div className="absolute inset-4 border-4 border-blue-500/70 rounded-full animate-pulse"></div>
-
-                                {/* Central icon */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <svg className="w-8 h-8 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-pink-400 mb-4">
-                            Generating Documentation
-                        </h2>
-                        <p className="text-gray-300 text-lg">
-                            Creating AI-powered documentation for <span className="font-mono text-purple-300">{repoFullName}</span>
-                        </p>
-                    </div>
-
-                    {/* Progress section */}
-                    <div className="mb-8">
-                        <div className="flex justify-between mb-4">
-                            <span className="text-white font-medium">
-                                {statusMessage}
-                            </span>
-                            <span className="text-purple-300 font-bold text-lg">
-                                {progress}%
-                            </span>
-                        </div>
-
-                        {/* Enhanced progress bar */}
-                        <div className="relative h-4 bg-white/10 rounded-full overflow-hidden">
-                            <div
-                                className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 transition-all duration-500 ease-out rounded-full"
-                                style={{ width: `${progress}%` }}
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 animate-ping"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Current file indicator */}
-                    {currentFile && (
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-6">
-                            <div className="flex items-center space-x-3">
-                                <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
-                                    <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                </div>
-                                <span className="text-gray-300 text-sm">Analyzing:</span>
-                                <span className="font-mono text-white bg-white/10 px-3 py-1 rounded-lg text-sm truncate max-w-md">
-                                    {currentFile}
-                                </span>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Fun facts or tips while loading */}
-                    <div className="text-center">
-                        <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-full px-6 py-3">
-                            <svg className="w-5 h-5 text-yellow-400 animate-spin" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-white text-sm">
-                                AI is analyzing your code structure and generating comprehensive documentation...
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
 
     const ErrorComponent = () => (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden" onMouseMove={handleMouseMove}>
@@ -433,163 +328,291 @@ function PreviewPageContent() {
     );
 
     if (loading) return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden">
-            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
-            <div className="relative z-10 text-center">
-                <div className="relative">
-                    <div className="w-20 h-20 border-4 border-purple-500/30 rounded-full animate-spin mx-auto mb-8">
-                        <div className="absolute inset-2 border-4 border-pink-500 rounded-full animate-ping"></div>
-                        <div className="absolute inset-4 border-4 border-blue-500 rounded-full animate-pulse"></div>
-                    </div>
-                    <div className="text-2xl font-bold text-white mb-4">Loading Your Repositories</div>
-                    <div className="text-gray-400">Fetching your amazing projects...</div>
-                </div>
-            </div>
-        </div>
+        <PreviewLoadingComponent repoFullName={repoFullName} statusMessage={statusMessage} progress={progress} currentFile={currentFile} />
     );
     if (error) return <ErrorComponent />;
 
-    return (
-        <div className="min-h-screen bg-slate-900 relative overflow-hidden" onMouseMove={handleMouseMove}>
-            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
-            {/* Dynamic background orbs */}
-            <div className="absolute inset-0 z-10">
-                <div
-                    className="absolute w-96 h-96 rounded-full opacity-5 blur-3xl transition-all duration-1000"
-                    style={{
-                        background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
-                        left: '10%',
-                        top: '10%',
-                    }}
-                />
-                <div
-                    className="absolute w-80 h-80 rounded-full opacity-5 blur-3xl transition-all duration-1000"
-                    style={{
-                        background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -25}px)`,
-                        right: '10%',
-                        bottom: '10%',
-                    }}
-                />
+    return (
+
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden" onMouseMove={handleMouseMove}>
+            {/* Enhanced Background */}
+
+            <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900/60 via-indigo-950/60 to-slate-900/60"></div>
+
+
+                {/* Floating particles */}
+                <div className="absolute inset-0">
+                    {[...Array(40)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute rounded-full animate-float"
+                            style={{
+                                width: `${Math.random() * 4 + 1}px`,
+                                height: `${Math.random() * 4 + 1}px`,
+                                background: `rgba(${Math.random() > 0.5 ? 139 : 236}, ${Math.random() > 0.5 ? 92 : 72}, ${Math.random() > 0.5 ? 246 : 153}, ${Math.random() * 0.3 + 0.1})`,
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDuration: `${Math.random() * 15 + 10}s`,
+                                animationDelay: `${Math.random() * 3}s`
+                            }}
+                        />
+                    ))}
+                </div>
+
+                {/* Dynamic light accents */}
+                <div className="absolute inset-0 z-10">
+                    <div
+                        className="absolute w-[300px] h-[300px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
+                        style={{
+                            background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
+                            transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
+                            left: '10%',
+                            top: '10%',
+                        }}
+                    />
+                    <div
+                        className="absolute w-[250px] h-[250px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
+                        style={{
+                            background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
+                            transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -25}px)`,
+                            right: '10%',
+                            bottom: '10%',
+                        }}
+                    />
+                </div>
             </div>
 
-            <div className="relative z-20 py-8 px-4">
+            {/* Enhanced Header */}
+            <div className="fixed top-0 left-0 right-0 z-30 backdrop-blur-md border-b border-white/10 bg-slate-900/80 py-4 px-6">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 className="text-lg font-bold text-white">Documentation Preview</h1>
+                            <p className="text-sm text-slate-300 truncate max-w-xs md:max-w-md">
+                                {repoFullName}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                        {/* Copy Button with improved feedback */}
+                        <button
+                            onClick={handleCopy}
+                            className="group relative px-4 py-2 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden"
+                            style={{
+                                background: copySuccess
+                                    ? 'linear-gradient(45deg, #10b981, #059669)'
+                                    : 'linear-gradient(45deg, #0ea5e9, #0284c7)',
+                            }}
+                        >
+                            <div className="flex items-center space-x-2 relative z-10">
+                                {copySuccess ? (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span>Copied!</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>Copy README</span>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Animated confirmation overlay */}
+                            {copySuccess && (
+                                <div className="absolute inset-0 bg-green-500/20 backdrop-blur-sm flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-white animate-checkmark" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                            )}
+                        </button>
+
+                        {/* Download Button with clearer labeling */}
+                        <button
+                            onClick={downloadMarkdown}
+                            disabled={downloadProgress > 0 && downloadProgress < 100}
+                            className="group relative px-4 py-2 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden disabled:opacity-70"
+                            style={{
+                                background: 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
+                            }}
+                        >
+                            <div className="flex items-center space-x-2 relative z-10">
+                                {downloadProgress > 0 && downloadProgress < 100 ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <span>{downloadProgress}%</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <span>Download README.md</span>
+                                    </>
+                                )}
+                            </div>
+                        </button>
+
+                        {/* Back Button */}
+                        <a
+                            href="/repos"
+                            className="group relative px-4 py-2 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden"
+                            style={{
+                                background: 'linear-gradient(45deg, #475569, #334155)',
+                            }}
+                        >
+                            <div className="flex items-center space-x-2 relative z-10">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                                <span>Back to Repos</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="relative z-20 pt-24 pb-8 px-4">
                 <div className="max-w-7xl mx-auto">
                     {documentation ? (
-                        <>
-                            {/* Enhanced Header */}
-                            <div className="mb-8">
-                                <div className="   p-8 ">
-                                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                                        <div>
-                                            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-pink-400 mb-2">
-                                                Documentation Generated! 🎉
-                                            </h1>
-                                            <p className="text-gray-300 text-lg">
-                                                Repository: <span className="font-mono text-purple-300">{repoFullName}</span>
-                                            </p>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row gap-4">
-                                            {/* Copy Button */}
-                                            <button
-                                                onClick={handleCopy}
-                                                className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden"
-                                                style={{
-                                                    background: copySuccess
-                                                        ? 'linear-gradient(45deg, #10b981, #059669)'
-                                                        : 'linear-gradient(45deg, #06b6d4, #0891b2)',
-                                                    boxShadow: '0 10px 30px rgba(6, 182, 212, 0.3)',
-                                                }}
+                        <div className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-xl overflow-hidden">
+                            <div className="p-6 border-b border-slate-700/50">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-white mb-1">
+                                            {documentation.title || "Project Documentation"}
+                                        </h1>
+                                        <p className="text-slate-300">
+                                            {documentation.tagline || "AI-generated documentation"}
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {documentation.badges.slice(0, 3).map((badge, index) => (
+                                            <span
+                                                key={index}
+                                                className="px-2 py-1 text-xs font-medium rounded-md bg-slate-700/50"
                                             >
-                                                <div className="flex items-center space-x-2 relative z-10">
-                                                    {copySuccess ? (
-                                                        <>
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                            <span>Copied!</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                            </svg>
-                                                            <span>Copy</span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                            </button>
-
-                                            {/* Download Button */}
-                                            <button
-                                                onClick={downloadMarkdown}
-                                                disabled={downloadProgress > 0 && downloadProgress < 100}
-                                                className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden disabled:opacity-50"
-                                                style={{
-                                                    background: 'linear-gradient(45deg, #8b5cf6, #ec4899)',
-                                                    boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)',
-                                                }}
-                                            >
-                                                <div className="flex items-center space-x-2 relative z-10">
-                                                    {downloadProgress > 0 && downloadProgress < 100 ? (
-                                                        <>
-                                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                            <span>{downloadProgress}%</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                            </svg>
-                                                            <span>Download</span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                            </button>
-
-                                            {/* Back Button */}
-                                            <a
-                                                href="/repos"
-                                                className="group relative px-6 py-3 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 overflow-hidden"
-                                                style={{
-                                                    background: 'linear-gradient(45deg, #64748b, #475569)',
-                                                    boxShadow: '0 10px 30px rgba(100, 116, 139, 0.3)',
-                                                }}
-                                            >
-                                                <div className="flex items-center space-x-2 relative z-10">
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                                    </svg>
-                                                    <span>Back to Repos</span>
-                                                </div>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                            </a>
-                                        </div>
+                                                {badge.label}
+                                            </span>
+                                        ))}
+                                        {documentation.badges.length > 3 && (
+                                            <span className="px-2 py-1 text-xs font-medium rounded-md bg-slate-700/50">
+                                                +{documentation.badges.length - 3}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Documentation Content */}
-                            <div className="overflow-hidden ">
-                                <ReadmePreview documentation={documentation} />
+                            <div className="flex min-h-screen">
+                                <DocNavigation
+                                    activeTab={activeTab}
+                                    setActiveTab={setActiveTab}
+                                    bestPractices={documentation.bestPractices}
+                                />
+
+                                <div className="flex-1 overflow-y-auto">
+                                    {activeTab === 'readme' ? (
+                                        <ReadmePreview documentation={documentation!} />
+                                    ) : (
+                                        documentation?.bestPractices ? (
+                                            <BestPracticesView data={documentation.bestPractices} />
+                                        ) : (
+                                            <div className="flex justify-center items-center h-full">
+                                                <p className="text-slate-400">No best practices analysis available</p>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
                             </div>
-                        </>
+                        </div>
                     ) : (
                         <div className="flex justify-center items-center min-h-[60vh]">
                             <div className="text-center">
-                                <div className="text-6xl mb-4">📄</div>
+                                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </div>
                                 <h3 className="text-2xl font-bold text-white mb-4">No documentation found</h3>
-                                <p className="text-gray-400">Something went wrong during generation</p>
+                                <p className="text-slate-400 max-w-md mx-auto">
+                                    We couldn&apos;t generate documentation for this repository. Please try again.
+                                </p>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="mt-6 px-6 py-3 rounded-xl font-medium text-white transition-all duration-300 hover:scale-105"
+                                    style={{
+                                        background: 'linear-gradient(45deg, #0ea5e9, #0284c7)',
+                                    }}
+                                >
+                                    Try Again
+                                </button>
                             </div>
                         </div>
                     )}
                 </div>
             </div>
+
+            {/* Success Toast */}
+            {copied && (
+                <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
+                    <div className="bg-green-500/90 backdrop-blur-sm text-white px-6 py-4 rounded-xl shadow-lg flex items-center space-x-3">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>README copied to clipboard!</span>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Styles */}
+            <style jsx>{`
+                @keyframes animate-slide-up {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .animate-slide-up {
+                    animation: animate-slide-up 0.3s ease-out forwards;
+                }
+                
+                @keyframes animate-checkmark {
+                    0% {
+                        stroke-dashoffset: 100;
+                        opacity: 0;
+                    }
+                    100% {
+                        stroke-dashoffset: 0;
+                        opacity: 1;
+                    }
+                }
+                
+                .animate-checkmark path {
+                    stroke-dasharray: 100;
+                    stroke-dashoffset: 100;
+                    animation: animate-checkmark 0.5s ease-out forwards;
+                }
+            `}</style>
         </div>
     );
 }

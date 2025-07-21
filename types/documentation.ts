@@ -1,3 +1,5 @@
+import { BestPractices } from "./bestPractices";
+
 // types/documentation.ts
 export interface Badge {
     label: string;
@@ -62,6 +64,7 @@ export interface Documentation {
     contributing: Contributing;
     license: string;
     author: string;
+    bestPractices: BestPractices;
 }
 
 export interface DocumentationResponse {

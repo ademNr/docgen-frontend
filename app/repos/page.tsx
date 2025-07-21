@@ -4,10 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Repository } from '@/types/repo';
-import { FiStar, FiGitBranch, FiClock, FiSearch } from 'react-icons/fi';
+import { FiStar, FiGitBranch, FiClock, FiSearch, FiX } from 'react-icons/fi';
+import LoadingPage from '@/components/LoadingPage';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function ReposPage() {
-    const { token, isAuthenticated } = useAuth();
+    const { token, isAuthenticated, logout, isLoading } = useAuth();
     const router = useRouter();
     const [repos, setRepos] = useState<Repository[]>([]);
     const [loading, setLoading] = useState(true);
@@ -16,7 +18,17 @@ export default function ReposPage() {
     const [hoveredRepo, setHoveredRepo] = useState<number | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('all');
+    const [userData, setUserData] = useState<any>(null);
+    const [currentFeature, setCurrentFeature] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [scrollY, setScrollY] = useState(0);
+    const [stars, setStars] = useState<Array<{
+        x: number;
+        y: number;
+        z: number;
+        size: number;
+        speed: number;
+    }>>([]);
     const [particles, setParticles] = useState<Array<{
         x: number;
         y: number;
@@ -26,22 +38,121 @@ export default function ReposPage() {
         color: string;
         opacity: number;
     }>>([]);
+    useEffect(() => {
+        // Initialize starfield
+        const newStars = Array.from({ length: 200 }, () => ({
+            x: (Math.random() - 0.5) * 2000,
+            y: (Math.random() - 0.5) * 2000,
+            z: Math.random() * 1000,
+            size: Math.random() * 2 + 1,
+            speed: Math.random() * 2 + 0.5,
+        }));
+        setStars(newStars);
+
+
+
+        // Scroll listener
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+
+
+    }, []);
+
+    // Animate starfield
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const animate = () => {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.z -= star.speed;
+                if (star.z <= 0) {
+                    star.z = 1000;
+                    star.x = (Math.random() - 0.5) * 2000;
+                    star.y = (Math.random() - 0.5) * 2000;
+                }
+
+                const x = (star.x / star.z) * canvas.width + canvas.width / 2;
+                const y = (star.y / star.z) * canvas.height + canvas.height / 2;
+                const size = (1 - star.z / 1000) * star.size;
+
+                if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
+                    ctx.beginPath();
+                    ctx.fillStyle = `rgba(255, 255, 255, ${0.8 - star.z / 1000})`;
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw star trails
+                    const prevX = (star.x / (star.z + star.speed)) * canvas.width + canvas.width / 2;
+                    const prevY = (star.y / (star.z + star.speed)) * canvas.height + canvas.height / 2;
+
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 - star.z / 1000})`;
+                    ctx.lineWidth = size * 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(prevX, prevY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+            });
+
+            requestAnimationFrame(animate);
+        };
+
+        animate();
+
+        const handleResize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [stars]);
+    const handleMouseMove = (e: React.MouseEvent) => {
+        setMousePos({
+            x: (e.clientX / window.innerWidth) * 2 - 1,
+            y: (e.clientY / window.innerHeight) * 2 - 1,
+        });
+    };
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            router.push('/login');
+        }
+    }, [isAuthenticated, isLoading, router]);
 
     useEffect(() => {
-
-        if (!isAuthenticated) {
-            router.push('/login');
-            return;
-        }
+        const fetchUserData = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('https://api.github.com/user', {
+                    headers: {
+                        Authorization: `token ${token}`,
+                    },
+                });
+                const data = await response.json();
+                setUserData(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
         const fetchRepos = async () => {
             const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-            console.log(backendUrl);
             try {
                 const response = await fetch(`${backendUrl}/api/user/repos`, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
-                        
+                        Authorization: `Bearer ${localStorage.getItem("github_token")}`,
                     },
                 });
 
@@ -58,6 +169,7 @@ export default function ReposPage() {
             }
         };
 
+        fetchUserData();
         fetchRepos();
 
         // Initialize particles
@@ -71,7 +183,7 @@ export default function ReposPage() {
             opacity: Math.random() * 0.5 + 0.1,
         }));
         setParticles(newParticles);
-    }, [token, isAuthenticated, router]);
+    }, [router, token]);
 
     // Animate particles
     useEffect(() => {
@@ -132,15 +244,9 @@ export default function ReposPage() {
         return () => window.removeEventListener('resize', handleResize);
     }, [particles]);
 
-    const handleMouseMove = (e: React.MouseEvent) => {
-        setMousePos({
-            x: (e.clientX / window.innerWidth) * 2 - 1,
-            y: (e.clientY / window.innerHeight) * 2 - 1,
-        });
-    };
+
 
     const handleGenerateDocs = (repoFullName: string) => {
-        // Navigate directly to preview page with repo parameter
         router.push(`/preview?repo=${encodeURIComponent(repoFullName)}`);
     };
 
@@ -179,21 +285,7 @@ export default function ReposPage() {
     const uniqueLanguages = ['all', ...Array.from(new Set(repos.map(repo => repo.language).filter(Boolean)))];
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden">
-                <canvas ref={canvasRef} className="absolute inset-0 z-0" />
-                <div className="relative z-10 text-center">
-                    <div className="relative">
-                        <div className="w-20 h-20 border-4 border-purple-500/30 rounded-full animate-spin mx-auto mb-8">
-                            <div className="absolute inset-2 border-4 border-pink-500 rounded-full animate-ping"></div>
-                            <div className="absolute inset-4 border-4 border-blue-500 rounded-full animate-pulse"></div>
-                        </div>
-                        <div className="text-2xl font-bold text-white mb-4">Loading Your Repositories</div>
-                        <div className="text-gray-400">Fetching your amazing projects...</div>
-                    </div>
-                </div>
-            </div>
-        );
+        return <LoadingPage />;
     }
 
     if (error) {
@@ -209,67 +301,174 @@ export default function ReposPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-900 relative overflow-hidden" onMouseMove={handleMouseMove}>
+        <div className="min-h-screen bg-slate-900 overflow-x-hidden" onMouseMove={handleMouseMove}>
             {/* Animated Background */}
-            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
+            <canvas
+                ref={canvasRef}
+                className="fixed inset-0 z-0"
+            />
 
             {/* Dynamic Background Orbs */}
-            <div className="absolute inset-0 z-10">
+            <div className="fixed inset-0 z-10">
                 <div
-                    className="absolute w-96 h-96 rounded-full opacity-10 blur-3xl transition-all duration-1000"
+                    className="absolute w-96 h-96 rounded-full opacity-20 blur-3xl transition-all duration-1000 ease-out"
                     style={{
                         background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * 50}px, ${mousePos.y * 50}px)`,
+                        transform: `translate(${mousePos.x * 100}px, ${mousePos.y * 100}px) scale(${1 + mousePos.x * 0.1})`,
                         left: '10%',
                         top: '10%',
                     }}
                 />
                 <div
-                    className="absolute w-80 h-80 rounded-full opacity-10 blur-3xl transition-all duration-1000"
+                    className="absolute w-80 h-80 rounded-full opacity-15 blur-3xl transition-all duration-1000 ease-out"
                     style={{
                         background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * -30}px, ${mousePos.y * -40}px)`,
+                        transform: `translate(${mousePos.x * -150}px, ${mousePos.y * -100}px)`,
                         right: '10%',
-                        bottom: '10%',
+                        top: '30%',
+                    }}
+                />
+                <div
+                    className="absolute w-72 h-72 rounded-full opacity-10 blur-3xl transition-all duration-1000 ease-out"
+                    style={{
+                        background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)',
+                        transform: `translate(${mousePos.x * 80}px, ${mousePos.y * 120}px)`,
+                        left: '50%',
+                        bottom: '20%',
                     }}
                 />
             </div>
-
             {/* Main Content */}
-            <div className="relative z-20 py-12 px-4">
+            <div className="relative z-20 pt-8 px-4">
                 <div className="max-w-7xl mx-auto">
-                    {/* Header */}
-                    <div className="text-center mb-16">
-                        <h1 className="text-5xl md:text-6xl font-black mb-6">
-                            <span
-                                className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-pink-400 animate-pulse"
+                    {/* Top Bar - User and Logout */}
+                    <div className="flex justify-between items-center mb-8 bg-slate-800/30 backdrop-blur-lg p-4 rounded-xl border border-slate-700/50 shadow-xl">
+                        {userData && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="flex items-center gap-3"
                             >
-                                Your GitHub Repositories
-                            </span>
-                        </h1>
-                        <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                            Choose a repository to transform into beautiful, AI-powered documentation
-                        </p>
+                                <div className="relative">
+                                    <div className="absolute -inset-1 bg-gradient-to-r  rounded-full blur-md opacity-30 animate-pulse"></div>
+                                    <motion.div
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <img
+                                            src={userData.avatar_url}
+                                            alt="User Avatar"
+                                            className="w-12 h-12 rounded-full border-2 border-slate-800/50 shadow-lg"
+                                        />
+                                    </motion.div>
+                                </div>
+                                <div>
+                                    <h1 className="text-lg font-bold text-white bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+                                        {userData.name || userData.login}
+                                    </h1>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-slate-300 text-xs">@{userData.login}</span>
+                                        <span className="text-xs px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-full">
+                                            {userData.public_repos} repos
+                                        </span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
 
-                        {/* Search and Filter */}
-                        <div className="flex flex-col md:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
-                            <div className="relative flex-1 max-w-md">
-                                <input
-                                    type="text"
-                                    placeholder="Search repositories..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300"
-                                />
-                                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                                    <FiSearch className="w-5 h-5 text-gray-400" />
+                        <div className="flex items-center gap-4">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={logout}
+                                className="group flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-white transition-all duration-300 overflow-hidden text-sm bg-gradient-to-r from-rose-600/90 to-rose-700 hover:from-rose-500 hover:to-rose-600 shadow-lg shadow-rose-500/20"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span>Logout</span>
+                            </motion.button>
+                        </div>
+                    </div>
+
+                    {/* Page Header - Enhanced with Animated Gradient */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="mb-10 text-center md:text-left"
+                    >
+
+
+
+
+                        <motion.div
+                            className="flex justify-center md:justify-start mt-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <div className="flex gap-2">
+                                <div className="px-3 py-1 text-xs bg-indigo-500/20 text-indigo-300 rounded-full flex items-center">
+                                    <FiStar className="mr-1" /> AI-Powered
+                                </div>
+                                <div className="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full flex items-center">
+                                    <FiGitBranch className="mr-1" /> Instant Preview
+                                </div>
+                                <div className="px-3 py-1 text-xs bg-cyan-500/20 text-cyan-300 rounded-full flex items-center">
+                                    <FiClock className="mr-1" /> Speed
                                 </div>
                             </div>
+                        </motion.div>
+                    </motion.div>
+                    {/* Page Header */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="mb-10"
+                    >
+                        <h1 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+                            Your GitHub Repositories
+                        </h1>
+                        <p className="text-gray-400 mt-3 max-w-2xl text-sm">
+                            Choose a repository to transform into beautiful, AI-powered documentation
+                        </p>
+                    </motion.div>
 
+                    {/* Search and Filter */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex flex-col md:flex-row gap-4 mb-10"
+                    >
+                        <div className="relative flex-1 max-w-xl">
+                            <input
+                                type="text"
+                                placeholder="Search repositories..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full px-4 pl-11 py-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300"
+                            />
+                            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                                <FiSearch className="w-4 h-4 text-slate-500" />
+                            </div>
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-slate-700/50"
+                                >
+                                    <FiX className="w-4 h-4 text-slate-500" />
+                                </button>
+                            )}
+                        </div>
+
+                        <motion.div whileHover={{ scale: 1.02 }}>
                             <select
                                 value={selectedLanguage}
                                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                                className="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300"
+                                className="w-full md:w-auto px-4 py-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 text-sm"
                             >
                                 {uniqueLanguages.map(lang => (
                                     <option key={lang} className="bg-slate-800 text-white">
@@ -277,115 +476,117 @@ export default function ReposPage() {
                                     </option>
                                 ))}
                             </select>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
 
                     {/* Repository Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredRepos.map((repo, index) => (
-                            <div
-                                key={repo.id}
-                                className="group relative"
-                                onMouseEnter={() => setHoveredRepo(repo.id)}
-                                onMouseLeave={() => setHoveredRepo(null)}
-                                style={{
-                                    transform: hoveredRepo === repo.id
-                                        ? `translateY(-10px) rotateX(${mousePos.y * 2}deg) rotateY(${mousePos.x * 2}deg)`
-                                        : 'translateY(0)',
-                                    transition: 'all 0.5s ease',
-                                }}
-                            >
-                                {/* Card */}
-                                <div className="relative h-full p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-purple-500/30">
-                                    {/* Animated Border */}
-                                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <AnimatePresence>
+                            {filteredRepos.map((repo) => (
+                                <motion.div
+                                    key={repo.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="group relative"
+                                    onMouseEnter={() => setHoveredRepo(repo.id)}
+                                    onMouseLeave={() => setHoveredRepo(null)}
+                                    style={{
+                                        transform: hoveredRepo === repo.id
+                                            ? `translateY(-6px) rotateX(${mousePos.y * 1}deg) rotateY(${mousePos.x * 1}deg)`
+                                            : 'translateY(0)',
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    {/* Card */}
+                                    <div className="relative h-full p-6 bg-slate-800/40 backdrop-blur-sm border border-slate-700 rounded-2xl overflow-hidden transition-all duration-300 group-hover:bg-slate-800/60 group-hover:border-purple-500/40 group-hover:shadow-xl group-hover:shadow-purple-500/10">
+                                        {/* Glow effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                                    {/* Shimmer Effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-
-                                    {/* Content */}
-                                    <div className="relative z-10">
-                                        {/* Header */}
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex-1">
-                                                <h2 className="text-2xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors duration-300">
-                                                    {repo.name}
-                                                </h2>
-                                                <p className="text-gray-400 text-sm">@{repo.owner}</p>
-                                            </div>
-
-                                            {repo.language && (
-                                                <div className="flex items-center space-x-2">
-                                                    <div
-                                                        className="w-3 h-3 rounded-full"
-                                                        style={{ backgroundColor: getLanguageColor(repo.language) }}
-                                                    />
-                                                    <span className="text-xs font-medium text-gray-300">
-                                                        {repo.language}
-                                                    </span>
+                                        {/* Content */}
+                                        <div className="relative z-10">
+                                            {/* Header */}
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex-1">
+                                                    <h2 className="text-lg font-bold text-white mb-1 group-hover:text-purple-300 transition-colors duration-300 truncate">
+                                                        {repo.name}
+                                                    </h2>
+                                                    <p className="text-slate-400 text-xs truncate">@{repo.owner}</p>
                                                 </div>
+
+                                                {repo.language && (
+                                                    <div className="flex items-center space-x-1.5 bg-slate-700/50 px-2 py-1 rounded-full">
+                                                        <div
+                                                            className="w-2.5 h-2.5 rounded-full"
+                                                            style={{ backgroundColor: getLanguageColor(repo.language) }}
+                                                        />
+                                                        <span className="text-xs font-medium text-slate-300">
+                                                            {repo.language}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Description */}
+                                            {repo.description && (
+                                                <p className="text-slate-300 mb-5 text-sm leading-relaxed line-clamp-3">
+                                                    {repo.description}
+                                                </p>
                                             )}
+
+                                            {/* Stats */}
+                                            <div className="flex flex-wrap gap-3 mb-5 text-xs text-slate-400">
+                                                <div className="flex items-center space-x-1.5 bg-slate-700/30 px-2.5 py-1 rounded-full">
+                                                    <FiStar className="w-3.5 h-3.5" />
+                                                    <span>{repo.stars.toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex items-center space-x-1.5 bg-slate-700/30 px-2.5 py-1 rounded-full">
+                                                    <FiGitBranch className="w-3.5 h-3.5" />
+                                                    <span>{repo.forks.toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex items-center space-x-1.5 bg-slate-700/30 px-2.5 py-1 rounded-full">
+                                                    <FiClock className="w-3.5 h-3.5" />
+                                                    <span>{formatDate(repo.updated_at)}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Generate Button */}
+                                            <motion.button
+                                                whileHover={{ scale: 1.03 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => handleGenerateDocs(repo.full_name)}
+                                                className="w-full py-3 px-4 rounded-xl text-sm font-bold text-white transition-all duration-300 relative overflow-hidden group"
+                                            >
+                                                <span className="relative z-10">Generate Documentation</span>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl z-0"></div>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+                                            </motion.button>
                                         </div>
-
-                                        {/* Description */}
-                                        {repo.description && (
-                                            <p className="text-gray-300 mb-6 leading-relaxed line-clamp-3">
-                                                {repo.description}
-                                            </p>
-                                        )}
-
-                                        {/* Stats */}
-                                        <div className="flex items-center space-x-6 mb-6 text-sm text-gray-400">
-                                            <div className="flex items-center space-x-1">
-                                                <FiStar className="w-4 h-4" />
-                                                <span className="font-medium">{repo.stars.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <FiGitBranch className="w-4 h-4" />
-                                                <span className="font-medium">{repo.forks.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <FiClock className="w-4 h-4" />
-                                                <span className="font-medium">{formatDate(repo.updated_at)}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Generate Button */}
-                                        <button
-                                            onClick={() => handleGenerateDocs(repo.full_name)}
-                                            className="w-full py-4 px-6 rounded-2xl font-bold text-white transition-all duration-300 transform group-hover:scale-105 relative overflow-hidden"
-                                            style={{
-                                                background: 'linear-gradient(45deg, #8b5cf6, #ec4899)',
-                                                boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.boxShadow = '0 20px 40px rgba(139, 92, 246, 0.5)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.3)';
-                                            }}
-                                        >
-                                            <div className="flex items-center justify-center space-x-2">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                                <span>Generate Documentation</span>
-                                            </div>
-                                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                                        </button>
                                     </div>
-                                </div>
-                            </div>
-                        ))}
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
                     </div>
 
                     {/* Empty State */}
-                    {filteredRepos.length === 0 && (
-                        <div className="text-center py-16">
-                            <div className="text-6xl mb-4">🔍</div>
-                            <h3 className="text-2xl font-bold text-white mb-4">No repositories found</h3>
-                            <p className="text-gray-400">Try adjusting your search or filter criteria</p>
-                        </div>
+                    {filteredRepos.length === 0 && !loading && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-16"
+                        >
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800/50 mb-6">
+                                <FiSearch className="w-8 h-8 text-indigo-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">No repositories found</h3>
+                            <p className="text-slate-400 max-w-md mx-auto">
+                                {searchTerm || selectedLanguage !== 'all'
+                                    ? "Try adjusting your search or filter criteria"
+                                    : "You don't have any repositories that match the current filters"}
+                            </p>
+                        </motion.div>
                     )}
                 </div>
             </div>
@@ -397,6 +598,20 @@ export default function ReposPage() {
                     -webkit-line-clamp: 3;
                     -webkit-box-orient: vertical;
                     overflow: hidden;
+                }
+                
+                /* Smooth scrollbar */
+                ::-webkit-scrollbar {
+                    width: 8px;
+                }
+                
+                ::-webkit-scrollbar-track {
+                    background: rgba(15, 23, 42, 0.4);
+                }
+                
+                ::-webkit-scrollbar-thumb {
+                    background: #4f46e5;
+                    border-radius: 4px;
                 }
             `}</style>
         </div>

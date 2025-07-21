@@ -1,6 +1,7 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  // This will redirect to login by default
-  redirect('/repos');
+  // Only redirect to /repos if authenticated
+  // Otherwise, the login page will handle redirection
+  redirect("/login");
 }

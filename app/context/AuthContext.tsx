@@ -1,6 +1,6 @@
 'use client';
 
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
@@ -8,18 +8,22 @@ interface AuthContextType {
     login: () => void;
     logout: () => void;
     isAuthenticated: boolean;
+    isLoading: boolean; // Add loading state
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true); // Track initialization
+    const router = useRouter();
 
     useEffect(() => {
         const storedToken = localStorage.getItem('github_token');
         if (storedToken) {
             setToken(storedToken);
         }
+        setIsLoading(false);
     }, []);
 
     const login = () => {
@@ -33,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = () => {
         localStorage.removeItem('github_token');
         setToken(null);
-        window.location.href = '/';
+        router.push('/login');
     };
 
     const saveToken = (newToken: string) => {
@@ -43,7 +47,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, login, logout, isAuthenticated: !!token }}>
+        <AuthContext.Provider value={{
+            token,
+            login,
+            logout,
+            isAuthenticated: !!token,
+            isLoading
+        }}>
             {children}
             <TokenSaver saveToken={saveToken} />
         </AuthContext.Provider>
@@ -51,15 +61,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const TokenSaver = ({ saveToken }: { saveToken: (token: string) => void }) => {
+    const router = useRouter();
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
 
         if (token) {
             saveToken(token);
-            window.location.href = '/repos';
+            // Clear token from URL
+            router.replace('/repos');
         }
-    }, [saveToken]);
+    }, [saveToken, router]);
 
     return null;
 };

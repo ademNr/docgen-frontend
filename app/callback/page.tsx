@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
+import LoadingPage from '@/components/LoadingPage';
 
 // Create a separate component for the content that uses useSearchParams
 function CallbackContent() {
@@ -31,6 +32,7 @@ function CallbackContent() {
                 // Save token to localStorage
                 localStorage.setItem('github_token', data.token);
                 router.push('/repos');
+
             } catch (error) {
                 console.error('Authentication error:', error);
                 router.push('/login?error=auth_failed');
@@ -43,12 +45,7 @@ function CallbackContent() {
     }, [code, router]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Authenticating with GitHub...</p>
-            </div>
-        </div>
+        <LoadingPage message='Authenticating with Github' subMessage='Wait a few seconds' />
     );
 }
 
