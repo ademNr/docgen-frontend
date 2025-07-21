@@ -7,7 +7,24 @@ import { Repository } from '@/types/repo';
 import { FiStar, FiGitBranch, FiClock, FiSearch, FiX } from 'react-icons/fi';
 import LoadingPage from '@/components/LoadingPage';
 import { AnimatePresence, motion } from 'framer-motion';
-
+interface UserData {
+    avatar_url: string;
+    name?: string; // Optional because of the fallback to login
+    login: string;
+    public_repos: number;
+    // Optional GitHub user properties that might be useful later:
+    id?: number;
+    html_url?: string;
+    followers?: number;
+    following?: number;
+    bio?: string;
+    location?: string;
+    blog?: string;
+    twitter_username?: string;
+    company?: string;
+    created_at?: string;
+    updated_at?: string;
+}
 export default function ReposPage() {
     const { token, isAuthenticated, logout, isLoading } = useAuth();
     const router = useRouter();
@@ -18,7 +35,7 @@ export default function ReposPage() {
     const [hoveredRepo, setHoveredRepo] = useState<number | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('all');
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<UserData>();
     const [currentFeature, setCurrentFeature] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [scrollY, setScrollY] = useState(0);
