@@ -29,9 +29,6 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
         "📝 Generating documentation template...",
         "✨ Auto-generating code examples and usage snippets...",
         "🛠  Analyzing code patterns and relationships...",
-        "📚 Organizing content into sections...",
-        "🎨 Applying your styling to documentation...",
-        "🔗 Cross-linking related components and APIs...",
         "✅ Finalizing interactive documentation pages...",
         "📦 Packaging documentation for export...",
         "🚀 Documentation ready! Applying finishing touches..."
