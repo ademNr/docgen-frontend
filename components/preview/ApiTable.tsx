@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiEndpoint } from '../types/documentation';
+import { ApiEndpoint } from '../../types/documentation';
 
 interface ApiTableProps {
     api: ApiEndpoint[];

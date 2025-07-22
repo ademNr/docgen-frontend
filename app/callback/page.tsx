@@ -4,13 +4,14 @@ import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import LoadingPage from '@/components/LoadingPage';
+import { useAuth } from '../context/AuthContext';
 
 // Create a separate component for the content that uses useSearchParams
 function CallbackContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const code = searchParams.get('code');
-
+    const { saveToken } = useAuth(); // Get saveToken from context
     useEffect(() => {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
         const exchangeToken = async () => {
@@ -31,18 +32,19 @@ function CallbackContent() {
                 const data = await response.json();
                 // Save token to localStorage
                 localStorage.setItem('github_token', data.token);
+                saveToken(data.token, data.userId);
                 router.push('/repos');
 
             } catch (error) {
                 console.error('Authentication error:', error);
-                router.push('/login?error=auth_failed');
+
             }
         };
 
         if (code) {
             exchangeToken();
         }
-    }, [code, router]);
+    }, [code, router, saveToken]);
 
     return (
         <LoadingPage message='Authenticating with Github' subMessage='Wait a few seconds' />

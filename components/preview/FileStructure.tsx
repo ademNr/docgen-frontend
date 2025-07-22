@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileStructureItem } from '../types/documentation';
+import { FileStructureItem } from '../../types/documentation';
 import { FolderIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 
 interface FileStructureProps {

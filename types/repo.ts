@@ -10,4 +10,7 @@ export interface Repository {
     updated_at: string;
     html_url: string;
     default_branch: string;
+    public_repos: number;
+    login: string;
+    avatar_url: string;
 }

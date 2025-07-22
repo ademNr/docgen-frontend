@@ -1,617 +1,159 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense } from 'react';
-import ReadmePreview from '../../components/ReadmePreview';
-import { Documentation } from '../../types/documentation';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import { useState, useEffect, useRef, Suspense, useCallback, memo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'next/navigation';
+import ProtectedRoute from '../../components/preview/ProtectedRoute';
+import PreviewLoadingComponent from '@/components/preview/PreviewLoadingComponent';
+import { useDocumentation } from '@/hooks/useDocumentation';
+import { useParticleAnimation } from '@/hooks/useParticleAnimation';
+import { generateMarkdown } from '@/utils/markdownUtils';
 import saveAs from 'file-saver';
-import PreviewLoadingComponent from '@/components/PreviewLoadingComponent';
-import BestPracticesView from '@/components/BestPractices';
-import DocNavigation from '@/components/DocNavigation';
+import ParticleBackground from '@/components/preview/ParticleBackground';
+import DocumentationHeader from '@/components/preview/DocumentationHeader';
+import ErrorView from '@/components/error/ErrorView';
+import DocumentationView from '@/components/preview/DocumentationView';
+import CopyToast from '@/components/toast/CopyToast';
+import NoDocumentationView from '@/components/preview/NoDocumentationView';
+import { ParticlesArray } from '@/types/particle';
+import NoCreditsView from '@/components/credit/NoCreditsView';
 
-// Create a separate component for the content that uses useSearchParams
 function PreviewPageContent() {
     const [copied, setCopied] = useState(false);
-    const [documentation, setDocumentation] = useState<Documentation>();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [progress, setProgress] = useState(0);
-    const [statusMessage, setStatusMessage] = useState('Initializing documentation generation...');
-    const { token } = useAuth();
-    const searchParams = useSearchParams();
-    const repoFullName = searchParams.get('repo');
-    const [currentFile, setCurrentFile] = useState<string | null>(null);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [activeTab, setActiveTab] = useState<string>('readme');
-    const [particles, setParticles] = useState<Array<{
-        x: number;
-        y: number;
-        vx: number;
-        vy: number;
-        size: number;
-        color: string;
-        opacity: number;
-        trail: Array<{ x: number, y: number, opacity: number }>;
-    }>>([]);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 }); // For background effect
 
-    // Initialize particles
-    useEffect(() => {
-        const newParticles = Array.from({ length: 40 }, () => ({
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            vx: (Math.random() - 0.5) * 3,
-            vy: (Math.random() - 0.5) * 3,
-            size: Math.random() * 4 + 2,
-            color: ['#8b5cf6', '#ec4899', '#06b6d4', '#10b981', '#f59e0b'][Math.floor(Math.random() * 5)],
-            opacity: Math.random() * 0.6 + 0.2,
-            trail: [],
-        }));
-        setParticles(newParticles);
-    }, []);
+    const { token, userId } = useAuth();
+    const searchParams = useSearchParams();
+    const repoFullName = searchParams.get('repo');
 
-    // Animate particles with trails
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+    const {
+        documentation,
+        loading,
+        error,
+        progress,
+        statusMessage,
+        currentFile,
+        creditsError
+    } = useDocumentation(token, userId, repoFullName);
 
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+    const { canvasRef, particles } = useParticleAnimation();
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach((particle) => {
-                // Update position
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-
-                // Bounce off edges
-                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-
-                // Add current position to trail
-                particle.trail.push({ x: particle.x, y: particle.y, opacity: particle.opacity });
-                if (particle.trail.length > 15) particle.trail.shift();
-
-                // Draw trail
-                particle.trail.forEach((point, index) => {
-                    const trailOpacity = (index / particle.trail.length) * point.opacity * 0.3;
-                    const trailSize = particle.size * (index / particle.trail.length) * 0.5;
-
-                    ctx.beginPath();
-                    ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
-                    ctx.fillStyle = `${particle.color}${Math.floor(trailOpacity * 255).toString(16).padStart(2, '0')}`;
-                    ctx.fill();
-                });
-
-                // Draw main particle with glow
-                const gradient = ctx.createRadialGradient(
-                    particle.x, particle.y, 0,
-                    particle.x, particle.y, particle.size * 2
-                );
-                gradient.addColorStop(0, particle.color);
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fillStyle = `${particle.color}${Math.floor(particle.opacity * 255).toString(16).padStart(2, '0')}`;
-                ctx.fill();
-            });
-
-            requestAnimationFrame(animate);
-        };
-
-        animate();
-
-        const handleResize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [particles]);
-
-    const handleMouseMove = (e: React.MouseEvent) => {
+    // For the background gradient effect
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
         setMousePos({
             x: (e.clientX / window.innerWidth) * 2 - 1,
             y: (e.clientY / window.innerHeight) * 2 - 1,
         });
-    };
+    }, []);
 
-    const generateMarkdown = (): string => {
-        if (!documentation) {
-            return '# Documentation\n\nNo documentation available.';
-        }
+    const handleCopy = useCallback(async () => {
+        if (!documentation) return;
 
-        const { title, description, tagline, badges, features, techStack, installation, usage, api, fileStructure, contributing, license, author } = documentation;
-
-        // Helper function to encode badge text as per shield.io rules
-        const encodeBadgeText = (text: string): string => {
-            return text
-                .replace(/-/g, '--')
-                .replace(/_/g, '__')
-                .replace(/ /g, '_');
-        };
-
-        return `
-# ${title}
-
-> ${tagline}
-
-${badges.map(b => {
-            const label = encodeBadgeText(b.label);
-            const status = encodeBadgeText(b.status);
-            let color = b.color;
-            if (color.startsWith('#')) {
-                color = color.substring(1);
-            }
-            return `![${b.label}](https://img.shields.io/badge/${label}-${status}-${color})`;
-        }).join(' ')}
-
-## 📝 Description
-${description}
-
-## ✨ Features
-${features.map(f => `- ${f}`).join('\n')}
-    
-    ## 🛠️ Tech Stack
-    ${techStack.map(tech => `- ${tech.name}`).join('\n')}
-    
-    ## ⚙️ Installation
-    ### Requirements
-    ${installation.requirements.map(r => `- ${r}`).join('\n')}
-    
-    ### Steps
-    ${installation.steps.join('\n')}
-    
-    ## 🚀 Usage
-    ### Basic
-    ${usage.basic}
-    
-    ### Advanced
-    ${usage.advanced}
-    
-    ## 🌐 API Reference
-    ${api.map(endpoint => `
-    ### \`${endpoint.method} ${endpoint.endpoint}\`
-    ${endpoint.description}
-    
-    **Parameters:**
-    ${endpoint.parameters.map(p => `- \`${p.name}\` (${p.type})${p.required ? ' [required]' : ''}: ${p.description || ''}`).join('\n')}
-    
-    **Example:**
-    \`\`\`bash
-    ${endpoint.example}
-    \`\`\`
-    `).join('\n')}
-    
-    ## 📂 File Structure
-    ${fileStructure.map(f => `- \`${f.path}\`: ${f.description}`).join('\n')}
-    
-    ## 🤝 Contributing
-    ### Setup
-    ${contributing.setup}
-    
-    ### Guidelines
-    ${contributing.guidelines}
-    
-    ### Process
-    ${contributing.process}
-    
-    ## 📜 License
-    This project is licensed under the ${license} License.
-    
-    ## 👤 Author
-    ${author}
-        `.trim();
-    };
-
-    const downloadMarkdown = () => {
-        const blob = new Blob([generateMarkdown()], { type: 'text/markdown;charset=utf-8' });
-        saveAs(blob, 'README.md');
-    };
-
-    const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(generateMarkdown());
+            await navigator.clipboard.writeText(generateMarkdown(documentation));
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            setCopySuccess(true);
+            setTimeout(() => {
+                setCopied(false);
+                setCopySuccess(false);
+            }, 2000);
         } catch (err) {
             console.error('Failed to copy text: ', err);
             const textArea = document.createElement('textarea');
-            textArea.value = generateMarkdown();
+            textArea.value = generateMarkdown(documentation);
             document.body.appendChild(textArea);
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            setCopySuccess(true);
+            setTimeout(() => {
+                setCopied(false);
+                setCopySuccess(false);
+            }, 2000);
         }
-    };
+    }, [documentation]);
 
-    // Update the useEffect hook for fetching documentation
-    useEffect(() => {
-        const fetchDocumentation = async () => {
-            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';;
-            if (!token || !repoFullName) {
-                setError('Missing required parameters');
-                setLoading(false);
-                return;
-            }
+    const downloadMarkdown = useCallback(() => {
+        if (!documentation) return;
 
-            const [owner, repo] = repoFullName.split('/');
-            let eventSource: EventSource | null = null;
-
-            try {
-                eventSource = new EventSource(
-                    `${backendUrl}/api/generate-progress?owner=${owner}&repo=${repo}&token=${token}`
-                );
-
-                eventSource.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-
-                    if (data.progress !== null && data.progress !== undefined) {
-                        setProgress(data.progress);
-                    }
-
-                    if (data.message) {
-                        setStatusMessage(data.message);
-                    }
-
-                    if (data.currentFile) {
-                        setCurrentFile(data.currentFile);
-                    } else if (data.progress === 100 || data.progress === -1) {
-                        setCurrentFile(null);
-                    }
-                };
-
-                eventSource.onerror = (err) => {
-                    console.error('EventSource error:', err);
-                    eventSource?.close();
-                    if (!error) setError('Progress tracking failed');
-                };
-
-                const response = await fetch(`${backendUrl}/api/generate-docs`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        token: token,
-                        owner,
-                        repo,
-                        includeTests: false,
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                setDocumentation(data.documentation);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (token && repoFullName) {
-            fetchDocumentation();
-        }
-    }, [token, repoFullName]);
-
-
-    const ErrorComponent = () => (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden" onMouseMove={handleMouseMove}>
-            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
-
-            <div className="relative z-20 text-center max-w-md px-4">
-                <div className="bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-3xl p-12 shadow-2xl">
-                    <div className="text-6xl mb-6 animate-bounce">⚠️</div>
-                    <h3 className="text-3xl font-bold text-red-400 mb-4">Oops! Something went wrong</h3>
-                    <p className="text-gray-300 mb-8 leading-relaxed">{error}</p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="w-full py-4 px-6 rounded-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
-                        style={{
-                            background: 'linear-gradient(45deg, #ef4444, #dc2626)',
-                            boxShadow: '0 10px 30px rgba(239, 68, 68, 0.3)',
-                        }}
-                    >
-                        <span>Try Again</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-200%] hover:translate-x-[200%] transition-transform duration-1000" />
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+        const blob = new Blob([generateMarkdown(documentation)], {
+            type: 'text/markdown;charset=utf-8'
+        });
+        saveAs(blob, 'README.md');
+    }, [documentation]);
 
     if (loading) return (
-        <PreviewLoadingComponent repoFullName={repoFullName} statusMessage={statusMessage} progress={progress} currentFile={currentFile} />
+        <PreviewLoadingComponent
+            repoFullName={repoFullName}
+            statusMessage={statusMessage}
+            progress={progress}
+            currentFile={currentFile}
+        />
     );
-    if (error) return <ErrorComponent />;
-
+    if (creditsError) return <NoCreditsView />;
+    if (error) return <ErrorView error={error} />;
 
     return (
+        <div
+            className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden"
+            onMouseMove={handleMouseMove}
+        >
+            <ParticleBackground canvasRef={canvasRef} particles={particles as ParticlesArray} />
 
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden" onMouseMove={handleMouseMove}>
-            {/* Enhanced Background */}
+            <DocumentationHeader
+                repoFullName={repoFullName}
+                copySuccess={copySuccess}
+                downloadProgress={downloadProgress}
+                onCopy={handleCopy}
+                onDownload={downloadMarkdown}
+            />
 
-            <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900/60 via-indigo-950/60 to-slate-900/60"></div>
-
-
-                {/* Floating particles */}
-                <div className="absolute inset-0">
-                    {[...Array(40)].map((_, i) => (
-                        <div
-                            key={i}
-                            className="absolute rounded-full animate-float"
-                            style={{
-                                width: `${Math.random() * 4 + 1}px`,
-                                height: `${Math.random() * 4 + 1}px`,
-                                background: `rgba(${Math.random() > 0.5 ? 139 : 236}, ${Math.random() > 0.5 ? 92 : 72}, ${Math.random() > 0.5 ? 246 : 153}, ${Math.random() * 0.3 + 0.1})`,
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDuration: `${Math.random() * 15 + 10}s`,
-                                animationDelay: `${Math.random() * 3}s`
-                            }}
-                        />
-                    ))}
-                </div>
-
-                {/* Dynamic light accents */}
-                <div className="absolute inset-0 z-10">
-                    <div
-                        className="absolute w-[300px] h-[300px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
-                        style={{
-                            background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                            transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
-                            left: '10%',
-                            top: '10%',
-                        }}
-                    />
-                    <div
-                        className="absolute w-[250px] h-[250px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
-                        style={{
-                            background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                            transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -25}px)`,
-                            right: '10%',
-                            bottom: '10%',
-                        }}
-                    />
-                </div>
-            </div>
-
-            {/* Responsive Header */}
-            <div className="fixed top-0 left-0 right-0 z-30 backdrop-blur-md border-b border-white/10 bg-slate-900/80 py-3 sm:py-4 px-4 sm:px-6">
-                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
-                    <div className="flex items-center space-x-2 sm:space-x-3">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                            <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 className="text-base sm:text-lg font-bold text-white">Documentation Preview</h1>
-                            <p className="text-xs sm:text-sm text-slate-300 truncate max-w-[180px] sm:max-w-md">
-                                {repoFullName}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto justify-end">
-                        {/* Responsive Buttons */}
-                        <button
-                            onClick={handleCopy}
-                            className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm"
-                            style={{
-                                background: copySuccess
-                                    ? 'linear-gradient(45deg, #10b981, #059669)'
-                                    : 'linear-gradient(45deg, #0ea5e9, #0284c7)',
-                            }}
-                        >
-                            <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
-                                {copySuccess ? (
-                                    <>
-                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <span>Copied!</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                        <span className="hidden sm:inline">Copy README</span>
-                                        <span className="sm:hidden">Copy</span>
-                                    </>
-                                )}
-                            </div>
-                            {copySuccess && (
-                                <div className="absolute inset-0 bg-green-500/20 backdrop-blur-sm flex items-center justify-center">
-                                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white animate-checkmark" viewBox="0 0 24 24">
-                                        <path fill="none" stroke="currentColor" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                            )}
-                        </button>
-
-                        <button
-                            onClick={downloadMarkdown}
-                            disabled={downloadProgress > 0 && downloadProgress < 100}
-                            className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm disabled:opacity-70"
-                            style={{
-                                background: 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
-                            }}
-                        >
-                            <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
-                                {downloadProgress > 0 && downloadProgress < 100 ? (
-                                    <>
-                                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                        <span>{downloadProgress}%</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        <span className="hidden sm:inline">Download</span>
-                                        <span className="sm:hidden">DL</span>
-                                    </>
-                                )}
-                            </div>
-                        </button>
-
-                        <a
-                            href="/repos"
-                            className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm"
-                            style={{
-                                background: 'linear-gradient(45deg, #475569, #334155)',
-                            }}
-                        >
-                            <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
-                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                                <span>Back</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {/* Responsive Content Area */}
             <div className="relative z-20 pt-20 sm:pt-24 pb-8 px-4">
                 <div className="max-w-7xl mx-auto">
                     {documentation ? (
-                        <div className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-xl overflow-hidden">
-                            <div className="p-4 sm:p-6 border-b border-slate-700/50">
-                                <div className="flex flex-col gap-3 sm:gap-4">
-                                    <div>
-                                        <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">
-                                            {documentation.title || "Project Documentation"}
-                                        </h1>
-                                        <p className="text-sm sm:text-base text-slate-300">
-                                            {documentation.tagline || "AI-generated documentation"}
-                                        </p>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {documentation.badges.slice(0, 3).map((badge, index) => (
-                                            <span
-                                                key={index}
-                                                className="px-2 py-1 text-xs font-medium rounded-md bg-slate-700/50"
-                                            >
-                                                {badge.label}
-                                            </span>
-                                        ))}
-                                        {documentation.badges.length > 3 && (
-                                            <span className="px-2 py-1 text-xs font-medium rounded-md bg-slate-700/50">
-                                                +{documentation.badges.length - 3}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row min-h-[calc(100vh-200px)]">
-                                {/* Mobile-friendly navigation toggle */}
-                                <div className="md:hidden p-3 border-b border-slate-700/50">
-                                    <select
-                                        value={activeTab}
-                                        onChange={(e) => setActiveTab(e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white"
-                                    >
-                                        <option value="readme">README</option>
-                                        <option value="bestPractices">Best Practices</option>
-                                    </select>
-                                </div>
-
-                                {/* Desktop navigation */}
-                                <div className="hidden md:block">
-                                    <DocNavigation
-                                        activeTab={activeTab}
-                                        setActiveTab={setActiveTab}
-                                        bestPractices={documentation.bestPractices}
-                                    />
-                                </div>
-
-                                <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                                    {activeTab === 'readme' ? (
-                                        <ReadmePreview documentation={documentation!} />
-                                    ) : (
-                                        documentation?.bestPractices ? (
-                                            <BestPracticesView data={documentation.bestPractices} />
-                                        ) : (
-                                            <div className="flex justify-center items-center h-full">
-                                                <p className="text-slate-400">No best practices analysis available</p>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <DocumentationView
+                            documentation={documentation}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                        />
                     ) : (
-                        <div className="flex justify-center items-center min-h-[60vh]">
-                            <div className="text-center px-4">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">No documentation found</h3>
-                                <p className="text-sm sm:text-base text-slate-400 max-w-md mx-auto">
-                                    We couldn&apos;t generate documentation for this repository. Please try again.
-                                </p>
-                                <button
-                                    onClick={() => window.location.reload()}
-                                    className="mt-4 sm:mt-6 px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 text-sm sm:text-base"
-                                    style={{
-                                        background: 'linear-gradient(45deg, #0ea5e9, #0284c7)',
-                                    }}
-                                >
-                                    Try Again
-                                </button>
-                            </div>
-                        </div>
+                        <NoDocumentationView />
                     )}
                 </div>
             </div>
 
-            {/* Responsive Toast */}
-            {copied && (
-                <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 animate-slide-up">
-                    <div className="bg-green-500/90 backdrop-blur-sm text-white px-4 py-3 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl shadow-lg flex items-center space-x-2 sm:space-x-3 text-sm sm:text-base">
-                        <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Copied to clipboard!</span>
-                    </div>
-                </div>
-            )}
+            {/* Dynamic light accents that follow mouse */}
+            <div className="absolute inset-0 z-10 pointer-events-none">
+                <div
+                    className="absolute w-[300px] h-[300px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
+                    style={{
+                        background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
+                        transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
+                        left: '10%',
+                        top: '10%',
+                    }}
+                />
+                <div
+                    className="absolute w-[250px] h-[250px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
+                    style={{
+                        background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
+                        transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -25}px)`,
+                        right: '10%',
+                        bottom: '10%',
+                    }}
+                />
+            </div>
+
+            {copied && <CopyToast />}
         </div>
     );
 }
 
-export default function PreviewPage() {
+const PreviewPage = () => {
     return (
         <ProtectedRoute>
             <Suspense fallback={
@@ -623,4 +165,6 @@ export default function PreviewPage() {
             </Suspense>
         </ProtectedRoute>
     );
-}
+};
+
+export default PreviewPage;

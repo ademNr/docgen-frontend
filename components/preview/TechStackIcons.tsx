@@ -5,7 +5,7 @@ import {
     SiExpress, SiMongodb, SiMongoose, SiPuppeteer,
     SiCora, SiDotenv
 } from 'react-icons/si';
-import { TechStackItem } from '../types/documentation';
+import { TechStackItem } from '../../types/documentation';
 
 interface TechStackIconsProps {
     techStack: TechStackItem[];

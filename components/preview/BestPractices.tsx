@@ -1,5 +1,5 @@
 // components/BestPractices.tsx
-import { BestPractices } from "../types/bestPractices";
+import { BestPractices } from "../../types/bestPractices";
 
 export default function BestPracticesView({ data }: { data: BestPractices }) {
     return (
