@@ -225,7 +225,7 @@ export default function LoginPage() {
                                     Git
                                 </span>
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 drop-shadow-2xl">
-                                    Forge
+                                    Forje
                                 </span>
                             </h1>
                             <div className="h-1 w-32 mx-auto bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-lg shadow-purple-500/50"></div>
