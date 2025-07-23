@@ -16,43 +16,27 @@ export default function BestPracticesView({ data }: { data: BestPractices }) {
                     </div>
                     <p className="text-slate-300">{data.summary}</p>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-slate-800/50 rounded-xl p-5">
-                        <h3 className="font-bold text-white mb-3">Strengths</h3>
-                        <ul className="space-y-2">
-                            {data.strengths.map((strength, i) => (
-                                <li key={i} className="flex items-start">
-                                    <svg className="w-5 h-5 text-green-400 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    <span className="text-slate-300">{strength}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="bg-slate-800/50 rounded-xl p-5">
-                        <h3 className="font-bold text-white mb-3">Improvement Areas</h3>
-                        <div className="space-y-4">
-                            {data.improvements.map((area, i) => (
-                                <div key={i}>
-                                    <h4 className="font-bold text-cyan-400 mb-1">{area.category}</h4>
-                                    <ul className="space-y-1">
-                                        {area.suggestions.map((suggestion, j) => (
-                                            <li key={j} className="flex items-start">
-                                                <svg className="w-4 h-4 text-yellow-400 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <span className="text-slate-300">{suggestion}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
+                <div className="bg-slate-800/50 rounded-xl p-5">
+                    <h3 className="font-bold text-white mb-3">Improvement Areas</h3>
+                    <div className="space-y-4">
+                        {data.improvements.map((area, i) => (
+                            <div key={i}>
+                                <h4 className="font-bold text-cyan-400 mb-1">{area.category}</h4>
+                                <ul className="space-y-1">
+                                    {area.suggestions.map((suggestion, j) => (
+                                        <li key={j} className="flex items-start">
+                                            <svg className="w-4 h-4 text-yellow-400 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span className="text-slate-300">{suggestion}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
                     </div>
                 </div>
+              
             </div>
 
             <div className="bg-slate-800/50 rounded-xl p-5">

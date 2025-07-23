@@ -19,5 +19,5 @@ const TabContent = memo(({ activeTab, documentation }: TabProps) => {
         <p>No best practices available</p>
     );
 });
-
+TabContent.displayName = 'TabContent';
 export default TabContent;

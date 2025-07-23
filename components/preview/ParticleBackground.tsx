@@ -30,7 +30,7 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            particles.forEach((particle: { x: number; vx: number; y: number; vy: number; trail: { x: any; y: any; opacity: any; }[]; opacity: number; size: number; color: string; }) => {
+            particles.forEach((particle: { x: number; vx: number; y: number; vy: number; trail: { x: number; y: number; opacity: number; }[]; opacity: number; size: number; color: string; }) => {
                 // Update position
                 particle.x += particle.vx;
                 particle.y += particle.vy;

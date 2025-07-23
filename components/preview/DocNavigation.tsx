@@ -1,6 +1,6 @@
 // components/DocNavigation.tsx
 import { BestPractices } from '@/types/bestPractices';
-import { useState } from 'react';
+
 
 export default function DocNavigation({
     activeTab,
@@ -57,25 +57,23 @@ export default function DocNavigation({
                             </div>
                         </div>
                     </div>
-
-                    <div className="mb-6">
-                        <h3 className="font-bold text-white mb-2">Summary</h3>
-                        <p className="text-slate-300 text-sm">{bestPractices.summary}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                        <div className="bg-slate-800/50 rounded-xl p-8 min-h-[300px]"> {/* Increased padding and min-height */}
+                            <h3 className="font-bold text-white text-xl mb-5">Strengths</h3> {/* Larger text */}
+                            <ul className="space-y-3"> {/* Increased spacing between items */}
+                                {bestPractices.strengths.map((strength, i) => (
+                                    <li key={i} className="flex items-start">
+                                        <svg className="w-6 h-6 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span className="text-slate-300 text-lg">{strength}</span> {/* Larger text */}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
 
-                    <div className="mb-6">
-                        <h3 className="font-bold text-white mb-2">Strengths</h3>
-                        <ul className="space-y-1">
-                            {bestPractices.strengths.map((strength, i) => (
-                                <li key={i} className="flex items-start">
-                                    <svg className="w-4 h-4 text-green-400 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    <span className="text-slate-300 text-sm">{strength}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+
                 </div>
             )}
         </div>

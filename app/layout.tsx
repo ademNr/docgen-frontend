@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'GitForje',
   description: 'Transform your GitHub repositories into stunning documentation that developers love to read',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/faviconLogo.ico',
   },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense, useCallback, memo } from 'react';
+import { useState, Suspense, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'next/navigation';
 import ProtectedRoute from '../../components/preview/ProtectedRoute';

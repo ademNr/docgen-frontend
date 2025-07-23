@@ -10,5 +10,5 @@ const CopyToast: React.FC = memo(() => (
         </div>
     </div>
 ));
-
+CopyToast.displayName = 'CopyToast';
 export default CopyToast;

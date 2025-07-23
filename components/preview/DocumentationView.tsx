@@ -80,5 +80,5 @@ const DocumentationView: React.FC<DocumentationViewProps> = memo(({
         </div>
     </div>
 ));
-
+DocumentationView.displayName = 'DocumentationView';
 export default DocumentationView;

@@ -26,5 +26,6 @@ const ActionButtons = memo(({
         </button>
     </div>
 ));
-
+// Set display name for the component
+ActionButtons.displayName = 'ActionButtons';
 export default ActionButtons;
