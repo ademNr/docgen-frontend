@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense, useCallback } from 'react';
+import { useState, Suspense, useCallback, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'next/navigation';
 import ProtectedRoute from '../../components/preview/ProtectedRoute';
@@ -24,7 +24,7 @@ function PreviewPageContent() {
     const [downloadProgress, setDownloadProgress] = useState(0);
     const [activeTab, setActiveTab] = useState<string>('readme');
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 }); // For background effect
-
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const { token, userId } = useAuth();
     const searchParams = useSearchParams();
     const repoFullName = searchParams.get('repo');
@@ -77,13 +77,47 @@ function PreviewPageContent() {
         }
     }, [documentation]);
 
+
+    // Cleanup interval on unmount
+    useEffect(() => {
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, []);
+
+    // Updated download function
     const downloadMarkdown = useCallback(() => {
         if (!documentation) return;
 
-        const blob = new Blob([generateMarkdown(documentation)], {
-            type: 'text/markdown;charset=utf-8'
-        });
-        saveAs(blob, 'README.md');
+        // Clear any existing intervals
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+
+        // Start progress simulation
+        setDownloadProgress(0);
+        let progress = 0;
+
+        intervalRef.current = setInterval(() => {
+            progress += 5;
+            if (progress >= 100) {
+                setDownloadProgress(100);
+                clearInterval(intervalRef.current!);
+
+                // Perform actual download
+                const blob = new Blob([generateMarkdown(documentation)], {
+                    type: 'text/markdown;charset=utf-8'
+                });
+                saveAs(blob, 'README.md');
+
+                // Reset progress after delay
+                setTimeout(() => setDownloadProgress(0), 300);
+            } else {
+                setDownloadProgress(progress);
+            }
+        }, 30);
     }, [documentation]);
 
     if (loading) return (
