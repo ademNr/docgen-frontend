@@ -323,7 +323,7 @@ export default function LoginPage() {
                         <div className="text-center mb-24">
                             <h2 className="text-6xl font-black text-white mb-6">
                                 Why developers choose
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600"> GitForge</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600"> GitForje</span>
                             </h2>
                             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
                                 Everything you need to create, maintain, and deploy world-class documentation
@@ -384,7 +384,7 @@ export default function LoginPage() {
                             </h2>
 
                             <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto leading-relaxed">
-                                Join thousands of developers who have already transformed their workflow with GitForge
+                                Join thousands of developers who have already transformed their workflow with GitForje
                             </p>
 
                             <button
