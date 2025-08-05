@@ -47,8 +47,8 @@ const PaymentPage = () => {
         });
     };
 
-    const handleEmailSubmit = async (e) => {
-        e.preventDefault();
+    const handleEmailSubmit = async () => {
+
         setError('');
         setSuccess('');
 
@@ -95,7 +95,7 @@ const PaymentPage = () => {
             }, 1500);
 
         } catch (err) {
-            setError(err.message || 'Failed to update email. Please try again.');
+            setError('Failed to update email. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -182,7 +182,7 @@ const PaymentPage = () => {
                         Generate docs in seconds, not hours
                     </h1>
                     <p className="text-base sm:text-lg text-gray-400 px-4 max-w-2xl mx-auto">
-                        Join thousands of developers who've automated their documentation
+                        Join thousands of developers who&apos;ve automated their documentation
                     </p>
                 </div>
             </div>
@@ -334,7 +334,7 @@ const PaymentPage = () => {
                         </form>
 
                         <p className="text-center text-gray-500 text-xs mt-6">
-                            We'll never spam you or share your email
+                            We&apos;ll never spam you or share your email
                         </p>
                     </div>
                 </div>
@@ -346,7 +346,7 @@ const PaymentPage = () => {
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mx-auto mb-6"></div>
                         <h3 className="text-2xl font-bold text-white mb-3">Redirecting to secure checkout</h3>
-                        <p className="text-gray-300 mb-4">You'll complete your purchase on Gumroad</p>
+                        <p className="text-gray-300 mb-4">You&apos;ll complete your purchase on Gumroad</p>
                         <p className="text-gray-400 text-sm">Email: {email}</p>
                     </div>
                 </div>
