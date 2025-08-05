@@ -35,7 +35,7 @@ export const useReposData = () => {
                 body: JSON.stringify({ userId }),
             });
 
-            if (!response.ok) throw new Error('Failed to fetch credits');
+
             const data = await response.json();
             setCredits(data.credits);
         } catch (err) {
