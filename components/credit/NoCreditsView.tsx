@@ -47,8 +47,8 @@ const PaymentPage = () => {
         });
     };
 
-    const handleEmailSubmit = async () => {
-
+    const handleEmailSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setError('');
         setSuccess('');
 
