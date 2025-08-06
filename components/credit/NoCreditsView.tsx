@@ -37,36 +37,36 @@ const PaymentPage = () => {
     // Credit packages with Gumroad links
     const creditPackages = [
         {
-            credits: 10,
-            price: 12.50,
-            perCredit: 1.25,
+            credits: 5,
+            price: 4.99,
+            perCredit: 0.99,
             recommended: false,
             features: [
-                '10 documentation generations',
+                '5 documentation generations',
                 'Basic support',
                 '1 month access'
             ],
             gumroadLink: 'https://gitforge.gumroad.com/l/bwqvf'
         },
         {
-            credits: 25,
-            price: 24.75,
-            perCredit: 0.99,
+            credits: 15,
+            price: 12.5,
+            perCredit: 0.83,
             recommended: false,
             features: [
-                '25 documentation generations',
+                '15 documentation generations',
                 'Priority support',
                 '3 months access'
             ],
             gumroadLink: 'https://gitforge.gumroad.com/l/tgajw'
         },
         {
-            credits: 50,
-            price: 44.50,
-            perCredit: 0.89,
+            credits: 30,
+            price: 24.75,
+            perCredit: 0.82,
             recommended: true,
             features: [
-                '50 documentation generations',
+                '30 documentation generations',
                 'Priority support',
                 '6 months access',
                 'Early access to beta features'
