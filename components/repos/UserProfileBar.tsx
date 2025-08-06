@@ -95,7 +95,7 @@ const UserProfileBar = ({ userData, credits, onLogout, isSubscribedLifeTime }: U
                                         >
                                             <FiZap className="text-blue-300" />
                                             <span className="font-medium">
-                                                {credits} {credits === 1 ? 'try' : ''} left
+                                                {credits} {credits === 1 ? 'try' : ''}
                                             </span>
                                         </motion.div>
                                         <motion.button
