@@ -2,7 +2,7 @@
 
 import { useState, Suspense, useCallback, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import ProtectedRoute from '../../components/preview/ProtectedRoute';
 import PreviewLoadingComponent from '@/components/preview/PreviewLoadingComponent';
 import { useDocumentation } from '@/hooks/useDocumentation';
@@ -17,17 +17,23 @@ import CopyToast from '@/components/toast/CopyToast';
 import NoDocumentationView from '@/components/preview/NoDocumentationView';
 import { ParticlesArray } from '@/types/particle';
 import NoCreditsView from '@/components/credit/NoCreditsView';
+import { useReposData } from '@/hooks/useReposData';
 
 function PreviewPageContent() {
+    const router = useRouter();
     const [copied, setCopied] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
     const [activeTab, setActiveTab] = useState<string>('readme');
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 }); // For background effect
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const { token, userId } = useAuth();
     const searchParams = useSearchParams();
     const repoFullName = searchParams.get('repo');
+
+    // Get user subscription data
+    const { credits, isSubscribedLifeTime, loading: loadingSubscription } = useReposData();
+    const canPerformActions = isSubscribedLifeTime || credits > 1;
 
     const {
         documentation,
@@ -41,7 +47,16 @@ function PreviewPageContent() {
 
     const { canvasRef, particles } = useParticleAnimation();
 
-    // For the background gradient effect
+    // Check if user can perform actions
+    const handleActionCheck = useCallback(() => {
+        if (!canPerformActions && !loadingSubscription) {
+            router.push('/payment');
+            return false;
+        }
+        return true;
+    }, [canPerformActions, loadingSubscription, router]);
+
+    // Mouse movement for background effect
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         setMousePos({
             x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -49,8 +64,9 @@ function PreviewPageContent() {
         });
     }, []);
 
+    // Copy to clipboard
     const handleCopy = useCallback(async () => {
-        if (!documentation) return;
+        if (!documentation || !handleActionCheck()) return;
 
         try {
             await navigator.clipboard.writeText(generateMarkdown(documentation));
@@ -75,10 +91,9 @@ function PreviewPageContent() {
                 setCopySuccess(false);
             }, 2000);
         }
-    }, [documentation]);
+    }, [documentation, handleActionCheck]);
 
-
-    // Cleanup interval on unmount
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (intervalRef.current) {
@@ -87,16 +102,14 @@ function PreviewPageContent() {
         };
     }, []);
 
-    // Updated download function
+    // Download markdown file
     const downloadMarkdown = useCallback(() => {
-        if (!documentation) return;
+        if (!documentation || !handleActionCheck()) return;
 
-        // Clear any existing intervals
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
         }
 
-        // Start progress simulation
         setDownloadProgress(0);
         let progress = 0;
 
@@ -106,21 +119,19 @@ function PreviewPageContent() {
                 setDownloadProgress(100);
                 clearInterval(intervalRef.current!);
 
-                // Perform actual download
                 const blob = new Blob([generateMarkdown(documentation)], {
                     type: 'text/markdown;charset=utf-8'
                 });
                 saveAs(blob, 'README.md');
 
-                // Reset progress after delay
                 setTimeout(() => setDownloadProgress(0), 300);
             } else {
                 setDownloadProgress(progress);
             }
         }, 30);
-    }, [documentation]);
+    }, [documentation, handleActionCheck]);
 
-    if (loading) return (
+    if (loading || loadingSubscription) return (
         <PreviewLoadingComponent
             repoFullName={repoFullName}
             statusMessage={statusMessage}
@@ -144,6 +155,7 @@ function PreviewPageContent() {
                 downloadProgress={downloadProgress}
                 onCopy={handleCopy}
                 onDownload={downloadMarkdown}
+
             />
 
             <div className="relative z-20 pt-20 sm:pt-24 pb-8 px-4">
@@ -160,7 +172,7 @@ function PreviewPageContent() {
                 </div>
             </div>
 
-            {/* Dynamic light accents that follow mouse */}
+            {/* Dynamic light accents */}
             <div className="absolute inset-0 z-10 pointer-events-none">
                 <div
                     className="absolute w-[300px] h-[300px] rounded-full opacity-10 blur-3xl transition-all duration-1000"
