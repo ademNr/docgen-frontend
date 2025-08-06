@@ -22,7 +22,7 @@ export default function ReposPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('all');
 
-    const { repos, userData, credits, loading, error } = useReposData();
+    const { repos, userData, credits, loading, error, isSubscribedLifeTime } = useReposData();
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -32,6 +32,13 @@ export default function ReposPage() {
     }, [isAuthenticated, authLoading, router]);
 
     const handleGenerateDocs = (repoFullName: string) => {
+        // Check if user has credits or subscription
+        if (!isSubscribedLifeTime && credits <= 0) {
+            // Redirect to payment page if no credits and not subscribed
+            router.push('/payment');
+            return;
+        }
+
         router.push(`/preview?repo=${encodeURIComponent(repoFullName)}`);
     };
 
@@ -104,6 +111,7 @@ export default function ReposPage() {
                         userData={userData}
                         credits={credits}
                         onLogout={logout}
+                        isSubscribedLifeTime={isSubscribedLifeTime}
                     />
 
                     <motion.div

@@ -404,7 +404,7 @@ export default function LoginPage() {
                             </button>
 
                             <p className="text-sm text-gray-500 mt-6">
-                                Free forever • No credit card required • 2-minute setup
+                                No credit card required • 2-minute setup
                             </p>
                         </div>
                     </div>

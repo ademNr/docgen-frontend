@@ -9,6 +9,7 @@ export const useReposData = () => {
     const [error, setError] = useState<string | null>(null);
     const [userData, setUserData] = useState<Repository | null>(null);
     const [credits, setCredits] = useState<number>(0);
+    const [isSubscribedLifeTime, setIsSubscribedLifeTime] = useState<boolean>(false);
 
     const fetchUserData = useCallback(async () => {
         try {
@@ -38,6 +39,7 @@ export const useReposData = () => {
 
             const data = await response.json();
             setCredits(data.credits);
+            setIsSubscribedLifeTime(data.isSubscribed);
         } catch (err) {
             console.error('Error fetching credits:', err);
         }
@@ -65,5 +67,5 @@ export const useReposData = () => {
         }
     }, [token, userId, fetchUserData, fetchCredits, fetchRepos]);
 
-    return { repos, userData, credits, loading, error };
+    return { repos, userData, credits, loading, error, isSubscribedLifeTime };
 };
