@@ -1,8 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCreditCard, FiLogOut, FiStar, FiGithub, FiInfo, FiZap } from 'react-icons/fi';
-
+interface UserData {
+    avatar_url: string;
+    name: string | null;
+    login: string;
+    public_repos: number;
+}
 interface UserProfileBarProps {
-    userData: any;
+    userData: UserData | null;
     credits: number;
     onLogout: () => void;
     isSubscribedLifeTime: boolean;
