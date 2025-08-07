@@ -10,6 +10,8 @@ export const useDocumentation = (token: string | null, userId: string | null, re
     const [statusMessage, setStatusMessage] = useState('Initializing...');
     const [currentFile, setCurrentFile] = useState<string | null>(null);
     const [creditsError, setCreditsError] = useState(false);
+    // In your useDocumentation hook or component
+
     useEffect(() => {
         if (!token || !repoFullName || !userId) return;
 
@@ -19,12 +21,13 @@ export const useDocumentation = (token: string | null, userId: string | null, re
 
             try {
                 const eventSource = new EventSource(
-                    `${backendUrl}/api/generate-progress?owner=${owner}&repo=${repo}&token=${token}`
+                    `${backendUrl}/api/docs/generate-progress?owner=${owner}&repo=${repo}&token=${token}`
                 );
 
                 eventSource.onmessage = (event) => {
+                    console.log(event.data);
                     const data = JSON.parse(event.data);
-                    if (data.progress !== undefined) setProgress(data.progress);
+                    if (data.progress) setProgress(data.progress);
                     if (data.message) setStatusMessage(data.message);
                     if (data.currentFile) setCurrentFile(data.currentFile);
                 };
@@ -34,7 +37,7 @@ export const useDocumentation = (token: string | null, userId: string | null, re
                     setError('Progress tracking failed');
                 };
 
-                const response = await fetch(`${backendUrl}/api/generate-docs`, {
+                const response = await fetch(`${backendUrl}/api/docs/generate`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -62,7 +65,6 @@ export const useDocumentation = (token: string | null, userId: string | null, re
                 setLoading(false);
             }
         };
-
         fetchDocumentation();
     }, [token, repoFullName, userId]);
 

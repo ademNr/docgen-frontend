@@ -18,6 +18,7 @@ import NoDocumentationView from '@/components/preview/NoDocumentationView';
 import { ParticlesArray } from '@/types/particle';
 import NoCreditsView from '@/components/credit/NoCreditsView';
 import { useReposData } from '@/hooks/useReposData';
+import LoadingComponent from '@/components/preview/PreviewLoadingComponent';
 
 function PreviewPageContent() {
     const router = useRouter();
@@ -132,7 +133,7 @@ function PreviewPageContent() {
     }, [documentation, handleActionCheck]);
 
     if (loading || loadingSubscription) return (
-        <PreviewLoadingComponent
+        <LoadingComponent
             repoFullName={repoFullName}
             statusMessage={statusMessage}
             progress={progress}
