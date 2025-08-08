@@ -42,7 +42,7 @@ function PreviewPageContent() {
         error,
         progress,
         statusMessage,
-        currentFile,
+  
         creditsError
     } = useDocumentation(token, userId, repoFullName);
 
@@ -137,7 +137,7 @@ function PreviewPageContent() {
             repoFullName={repoFullName}
             statusMessage={statusMessage}
             progress={progress}
-            currentFile={currentFile}
+       
         />
     );
     if (creditsError) return <NoCreditsView />;

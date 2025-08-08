@@ -1,17 +1,19 @@
 "use client";
+
 import { useEffect, useState, useRef } from 'react';
+
 interface LoadingComponentProps {
     repoFullName: string | null;
     statusMessage: string;
     progress: number;
-    currentFile: string | null;
+
 }
 
 const LoadingComponent: React.FC<LoadingComponentProps> = ({
     repoFullName,
     statusMessage,
     progress,
-    currentFile
+
 }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -33,6 +35,7 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
         "📦 Packaging documentation for export...",
         "🚀 Documentation ready! Applying finishing touches..."
     ];
+
     const [currentTip, setCurrentTip] = useState(0);
 
     useEffect(() => {
@@ -92,7 +95,6 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
                     // Draw star trails
                     const prevX = (star.x / (star.z + star.speed)) * canvas.width + canvas.width / 2;
                     const prevY = (star.y / (star.z + star.speed)) * canvas.height + canvas.height / 2;
-
                     ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 - star.z / 1000})`;
                     ctx.lineWidth = size * 0.5;
                     ctx.beginPath();
@@ -124,7 +126,10 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center relative overflow-hidden" onMouseMove={handleMouseMove}>
+        <div
+            className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center relative overflow-hidden"
+            onMouseMove={handleMouseMove}
+        >
             {/* Starfield Canvas */}
             <canvas
                 ref={canvasRef}
@@ -152,44 +157,21 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
                                 {statusMessage}
                             </span>
                             <span className="text-cyan-300 font-bold">
-                                {progress}%
+                                {Math.round(progress)}%
                             </span>
                         </div>
-
-                        {/* Minimal progress bar */}
+                        {/* Progress bar */}
                         <div className="relative h-2 bg-slate-700 rounded-full overflow-hidden">
                             <div
-                                className="absolute inset-0 rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-cyan-500 to-indigo-500"
+                                className="absolute inset-0 rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-cyan-500 to-indigo-500"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
                     </div>
 
-                    {/* Current file indicator */}
-                    {currentFile && (
-                        <div className="mb-6">
-                            <div className="bg-slate-700/40 border border-slate-600/50 rounded-lg p-4 flex items-center">
-                                <div className="flex space-x-1.5 mr-3">
-                                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-                                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-                                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
-                                </div>
-                                <div className="overflow-hidden">
-                                    <div className="text-slate-400 text-xs mb-1">Processing file:</div>
-                                    <div className="font-mono text-white text-sm flex items-center">
-                                        <span className="truncate max-w-xs md:max-w-md">
-                                            {currentFile}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     {/* Tips while loading */}
                     <div className="text-center">
                         <div className="inline-flex items-center space-x-2 bg-slate-700/30 border border-slate-600/50 rounded-lg px-4 py-3">
-
                             <span className="text-slate-300 text-sm">
                                 {tips[currentTip]}
                             </span>
@@ -204,18 +186,6 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({
                 <div className="w-3 h-3 rounded-full bg-indigo-500 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
                 <div className="w-3 h-3 rounded-full bg-purple-500 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
             </div>
-
-            {/* Custom Styles */}
-            <style jsx>{`
-        @keyframes animate-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.3; }
-        }
-        
-        .animate-pulse {
-          animation: animate-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-      `}</style>
         </div>
     );
 };
