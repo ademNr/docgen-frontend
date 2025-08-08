@@ -134,7 +134,7 @@ const UserProfileBar = ({ userData, credits, onLogout, isSubscribedLifeTime }: U
                                 whileHover={{ scale: 1.03 }}
                             >
                                 <FiGithub className="text-slate-400" size={12} />
-                                <span>{userData.public_repos} repos</span>
+                                <span>{userData.public_repos} public repos</span>
                             </motion.div>
 
                             {/* Credit info tooltip */}
