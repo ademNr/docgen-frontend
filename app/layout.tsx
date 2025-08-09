@@ -2,7 +2,7 @@ import './globals.css';
 import { AuthProvider } from './context/AuthContext';
 import { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: 'GitForje',
+  title: 'Gitforje',
   description: 'Transform your GitHub repositories into stunning documentation that developers love to read',
   icons: {
     icon: '/faviconLogo.ico',

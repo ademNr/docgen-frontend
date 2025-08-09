@@ -294,7 +294,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                         </div>
                         <div className="mt-4 md:mt-0">
                             <p className="text-xs text-gray-500">
-                                Generated with ❤️ by GitForje
+                                Generated with ❤️ by Gitforje
                             </p>
                         </div>
                     </div>

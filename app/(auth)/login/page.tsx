@@ -3,15 +3,22 @@ import { useAuth } from '@/app/context/AuthContext';
 import LoadingPage from '@/components/LoadingPage';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
+import { Code, Zap, Palette, Brain, Github, Play, Star, GitFork, Eye, Users, FileText, TrendingUp, Download, Shield, Cpu, BookOpen, AlertCircle, GitPullRequest, Settings, Bell, Plus, User, UserCheck, UserCog, UserPlus, Crown, Heart } from 'lucide-react';
 
 export default function LoginPage() {
     const { isAuthenticated, login, isLoading } = useAuth();
     const router = useRouter();
-
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [scrollY, setScrollY] = useState(0);
     const [currentFeature, setCurrentFeature] = useState(0);
+    const [typedText, setTypedText] = useState('');
+    const [showCursor, setShowCursor] = useState(true);
+    const [statsVisible, setStatsVisible] = useState(false);
+    const [animatedStats, setAnimatedStats] = useState({ developers: 0, docs: 0, uptime: 0 });
+    const [currentCodeLine, setCurrentCodeLine] = useState(0);
+    const [activeTab, setActiveTab] = useState('code');
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const statsRef = useRef<HTMLDivElement>(null);
     const [stars, setStars] = useState<Array<{
         x: number;
         y: number;
@@ -20,32 +27,165 @@ export default function LoginPage() {
         speed: number;
     }>>([]);
 
+    const fullText = "A production-ready Next.js 14 application featuring modern authentication, beautiful UI components, and TypeScript support. Built with industry best practices and optimized for performance.";
+    const codeLines = [
+        "git clone https://github.com/username/nextjs-auth-app.git",
+        "cd nextjs-auth-app",
+        "npm install",
+        "npm run dev"
+    ];
+
+    const tabs = [
+        { id: 'code', label: 'Code', icon: Code, count: null },
+        { id: 'issues', label: 'Issues', icon: AlertCircle, count: 12 },
+        { id: 'pulls', label: 'Pull requests', icon: GitPullRequest, count: 3 },
+        { id: 'discussions', label: 'Discussions', icon: Users, count: 8 }
+    ];
+
     const features = [
         {
-            icon: "⚡",
+            icon: <Zap className="w-8 h-8" />,
             title: "Lightning Fast",
             desc: "Generate comprehensive documentation in seconds, not hours",
             gradient: "from-yellow-400 to-orange-500"
         },
         {
-            icon: "🎨",
+            icon: <Palette className="w-8 h-8" />,
             title: "Beautiful Design",
             desc: "Stunning, responsive layouts that make your docs shine",
             gradient: "from-pink-400 to-rose-500"
         },
         {
-            icon: "🤖",
-            title: "AI Powered",
-            desc: "Smart content generation that understands your codebase",
+            icon: <Brain className="w-8 h-8" />,
+            title: "Smart content generation",
+            desc: "AI-powered content that understands your codebase",
             gradient: "from-blue-400 to-indigo-500"
         },
-        {
-            icon: "🚀",
-            title: "Deploy Anywhere",
-            desc: "One-click deployment to multiple platforms and CDNs",
-            gradient: "from-green-400 to-emerald-500"
-        },
     ];
+
+    // Typing animation effect
+    useEffect(() => {
+        let index = 0;
+        const typeInterval = setInterval(() => {
+            if (index < fullText.length) {
+                setTypedText(fullText.slice(0, index + 1));
+                index++;
+            } else {
+                clearInterval(typeInterval);
+            }
+        }, 25);
+        return () => clearInterval(typeInterval);
+    }, []);
+
+    // Code line animation
+    useEffect(() => {
+        const codeInterval = setInterval(() => {
+            setCurrentCodeLine(prev => (prev + 1) % codeLines.length);
+        }, 2500);
+        return () => clearInterval(codeInterval);
+    }, []);
+
+    // Cursor blinking effect
+    useEffect(() => {
+        const cursorInterval = setInterval(() => {
+            setShowCursor(prev => !prev);
+        }, 500);
+        return () => clearInterval(cursorInterval);
+    }, []);
+
+    // Stats animation
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && !statsVisible) {
+                    setStatsVisible(true);
+
+                    // Animate developers count
+                    let devCount = 0;
+                    const devInterval = setInterval(() => {
+                        devCount += 50;
+                        if (devCount >= 2500) {
+                            devCount = 2500;
+                            clearInterval(devInterval);
+                        }
+                        setAnimatedStats(prev => ({ ...prev, developers: devCount }));
+                    }, 20);
+
+                    // Animate docs count
+                    let docsCount = 0;
+                    const docsInterval = setInterval(() => {
+                        docsCount += 100;
+                        if (docsCount >= 5800) {
+                            docsCount = 5800;
+                            clearInterval(docsInterval);
+                        }
+                        setAnimatedStats(prev => ({ ...prev, docs: docsCount }));
+                    }, 25);
+
+                    // Animate uptime
+                    let uptimeCount = 0;
+                    const uptimeInterval = setInterval(() => {
+                        uptimeCount += 1;
+                        if (uptimeCount >= 99.9) {
+                            uptimeCount = 99.9;
+                            clearInterval(uptimeInterval);
+                        }
+                        setAnimatedStats(prev => ({ ...prev, uptime: uptimeCount }));
+                    }, 30);
+                }
+            },
+            { threshold: 0.1 } // Lowered threshold from 0.5 to 0.1
+        );
+
+        if (statsRef.current) {
+            observer.observe(statsRef.current);
+        }
+
+        // Fallback animation trigger after 3 seconds if intersection observer doesn't work
+        const fallbackTimer = setTimeout(() => {
+            if (!statsVisible) {
+                setStatsVisible(true);
+
+                // Animate developers count
+                let devCount = 0;
+                const devInterval = setInterval(() => {
+                    devCount += 50;
+                    if (devCount >= 2500) {
+                        devCount = 2500;
+                        clearInterval(devInterval);
+                    }
+                    setAnimatedStats(prev => ({ ...prev, developers: devCount }));
+                }, 20);
+
+                // Animate docs count
+                let docsCount = 0;
+                const docsInterval = setInterval(() => {
+                    docsCount += 100;
+                    if (docsCount >= 5800) {
+                        docsCount = 5800;
+                        clearInterval(docsInterval);
+                    }
+                    setAnimatedStats(prev => ({ ...prev, docs: docsCount }));
+                }, 25);
+
+                // Animate uptime
+                let uptimeCount = 0;
+                const uptimeInterval = setInterval(() => {
+                    uptimeCount += 1;
+                    if (uptimeCount >= 99.9) {
+                        uptimeCount = 99.9;
+                        clearInterval(uptimeInterval);
+                    }
+                    setAnimatedStats(prev => ({ ...prev, uptime: uptimeCount }));
+                }, 30);
+            }
+        }, 3000);
+
+        return () => {
+            observer.disconnect();
+            clearTimeout(fallbackTimer);
+        };
+    }, [statsVisible]);
 
     useEffect(() => {
         if (isAuthenticated && !isLoading) {
@@ -55,12 +195,12 @@ export default function LoginPage() {
 
     useEffect(() => {
         // Initialize starfield
-        const newStars = Array.from({ length: 150 }, () => ({
+        const newStars = Array.from({ length: 200 }, () => ({
             x: (Math.random() - 0.5) * 2000,
             y: (Math.random() - 0.5) * 2000,
             z: Math.random() * 1000,
-            size: Math.random() * 2 + 1,
-            speed: Math.random() * 2 + 0.5,
+            size: Math.random() * 2 + 0.5,
+            speed: Math.random() * 1.5 + 0.5,
         }));
         setStars(newStars);
 
@@ -79,11 +219,10 @@ export default function LoginPage() {
         };
     }, []);
 
-    // Animate starfield
+    // Enhanced starfield animation
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
@@ -108,15 +247,23 @@ export default function LoginPage() {
 
                 if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
                     ctx.beginPath();
-                    ctx.fillStyle = `rgba(139, 92, 246, ${0.6 - star.z / 1000})`;
+                    const opacity = 0.3 - star.z / 1000;
+                    ctx.fillStyle = `rgba(139, 92, 246, ${opacity})`;
                     ctx.arc(x, y, size, 0, Math.PI * 2);
                     ctx.fill();
+
+                    // Add glow effect for brighter stars
+                    if (opacity > 0.15) {
+                        ctx.beginPath();
+                        ctx.fillStyle = `rgba(139, 92, 246, ${opacity * 0.2})`;
+                        ctx.arc(x, y, size * 1.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
             });
 
             requestAnimationFrame(animate);
         };
-
         animate();
 
         const handleResize = () => {
@@ -139,14 +286,13 @@ export default function LoginPage() {
         login();
     };
 
-    // If still loading or authenticated, show loading state
     if (isLoading || isAuthenticated) {
         return <LoadingPage />;
     }
 
     return (
         <div className="min-h-screen bg-slate-900 overflow-x-hidden" onMouseMove={handleMouseMove}>
-            {/* Animated Starfield Canvas */}
+            {/* Clean Starfield Canvas Only */}
             <canvas
                 ref={canvasRef}
                 className="fixed inset-0 z-0"
@@ -155,270 +301,440 @@ export default function LoginPage() {
                 }}
             />
 
-            {/* Dynamic Background Elements */}
-            <div className="fixed inset-0 z-10">
-                {/* Floating orbs */}
-                <div
-                    className="absolute w-96 h-96 rounded-full opacity-10 blur-3xl transition-all duration-[2000ms] ease-out"
-                    style={{
-                        background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * 50}px, ${mousePos.y * 50}px) scale(${1 + Math.abs(mousePos.x) * 0.1})`,
-                        left: '20%',
-                        top: '10%',
-                        animation: 'float 8s ease-in-out infinite',
-                    }}
-                />
-                <div
-                    className="absolute w-80 h-80 rounded-full opacity-8 blur-3xl transition-all duration-[2500ms] ease-out"
-                    style={{
-                        background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * -40}px, ${mousePos.y * -30}px)`,
-                        right: '15%',
-                        top: '20%',
-                        animation: 'float 10s ease-in-out infinite reverse',
-                    }}
-                />
-                <div
-                    className="absolute w-64 h-64 rounded-full opacity-6 blur-3xl transition-all duration-[3000ms] ease-out"
-                    style={{
-                        background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                        transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 40}px)`,
-                        left: '60%',
-                        bottom: '30%',
-                        animation: 'float 12s ease-in-out infinite',
-                    }}
-                />
-            </div>
+            {/* Subtle Grid Pattern */}
+            <div className="fixed inset-0 z-5 opacity-[0.02]" style={{
+                backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)`,
+                backgroundSize: '50px 50px'
+            }}></div>
 
             {/* Main Content */}
             <div className="relative z-20">
-                {/* Hero Section */}
-                <section className="min-h-screen flex items-center justify-center px-6 py-20">
-                    <div className="max-w-7xl mx-auto text-center">
-                        {/* Logo */}
-                        {/* <svg className="w-14 h-14 text-white" fill="currentColor" viewBox="0 0 24 24">
-
-                            <path d="M4 18h16a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z" />
-                            <path d="M6 14h12a2 2 0 0 1 2 2v2H4v-2a2 2 0 0 1 2-2z" fillOpacity="0.9" />
-                            <path d="M18 12v-3a1 1 0 0 1 2 0v5h-4v-2z" />
-                            <path d="M5 10h14a1 1 0 0 1 1 1v3H4v-3a1 1 0 0 1 1-1z" fillOpacity="0.95" />
-
-                            <path d="M8 7.5c0-1.2.8-2.5 2-2.5s2 1.3 2 2.5c0 1-.5 1.8-1 2.2s-1-.2-1-1.7z" opacity="0.9">
-                                <animate attributeName="opacity" values="0.9;1;0.9" dur="1.5s" repeatCount="indefinite" />
-                            </path>
-                            <path d="M12 5.5c0-1.5.8-2.8 1.8-2.8s1.2 1.3 1.2 2.8c0 1-.6 1.8-1.2 2.2s-1.8-.4-1.8-2.2z" opacity="0.7">
-                                <animate attributeName="opacity" values="0.7;0.9;0.7" dur="1.8s" repeatCount="indefinite" />
-                            </path>
-                            <path d="M16 7c0-1.3.6-2.5 1.5-2.5s.5 1.2.5 2.5c0 1-.5 1.7-1 2s-1-.5-1-2z" opacity="0.8">
-                                <animate attributeName="opacity" values="0.8;1;0.8" dur="1.6s" repeatCount="indefinite" />
-                            </path>
-
-
-                            <path d="M10 9.5l2-1.5 2 1.5-2 1.5z" opacity="0.3" />
-                            <path d="M6 12h3v1H6z" opacity="0.4" />
-                        </svg> */}
-
-                        {/* Brand Name */}
-                        <div className="mb-8 animate-fade-in-up animation-delay-200">
-                            <h1 className="text-7xl md:text-9xl font-black mb-4 leading-none">
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-blue-200 drop-shadow-2xl">
-                                    Git
-                                </span>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 drop-shadow-2xl">
-                                    Forje
-                                </span>
-                            </h1>
-                            <div className="h-1 w-32 mx-auto bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-lg shadow-purple-500/50"></div>
-                        </div>
-
-                        {/* Tagline */}
-                        <p className="text-2xl md:text-3xl font-light text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
-                            Transform your GitHub repositories into
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600 font-medium"> stunning documentation </span>
-                            that developers love to read
-                        </p>
-
-                        {/* Subtitle */}
-                        <p className="text-lg text-gray-400 mb-16 max-w-3xl mx-auto animate-fade-in-up animation-delay-600">
-                            AI-powered documentation generation • Beautiful template • One-click deployment • Zero configuration
-                        </p>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20 animate-fade-in-up animation-delay-800">
-                            <button
-                                onClick={handleLogin}
-                                className="group relative px-12 py-5 text-xl font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-2xl shadow-purple-500/25 transition-all duration-500 hover:scale-105 hover:shadow-purple-500/40 active:scale-95 overflow-hidden"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative flex items-center">
-                                    <svg className="w-6 h-6 mr-3 transition-transform duration-300 group-hover:rotate-12" fill="currentColor" viewBox="0 0 24 24">
-                                        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" />
-                                    </svg>
-                                    Start with GitHub
-                                </div>
-                            </button>
-
-                            <button onClick={handleLogin} className="px-8 py-5 text-lg font-semibold text-gray-300 border border-gray-600 rounded-2xl transition-all duration-300 hover:border-purple-400 hover:text-white hover:bg-purple-500/10 hover:scale-105">
-                                <div className="flex items-center">
-                                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    View Demo
-                                </div>
-                            </button>
-                        </div>
-
-                        {/* Enhanced Social Proof - Responsive */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto animate-fade-in-up animation-delay-1000 px-4 sm:px-6">
-                            {/* Developer Card */}
-                            <div className="text-center group relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative bg-slate-900 rounded-2xl p-4 sm:p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-purple-500/50 group-hover:shadow-xl group-hover:shadow-purple-500/20 border border-slate-800/50">
-                                    <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-400 to-purple-500 mb-2 relative">
-                                        2.5K+
-                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-purple-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full animate-pulse-slow"></div>
-                                    </div>
-                                    <div className="text-xs sm:text-sm font-medium bg-gradient-to-r from-purple-400/60 to-purple-300/80 text-transparent bg-clip-text group-hover:from-purple-300 group-hover:to-purple-200 transition-all">
-                                        Developers
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Docs Card */}
-                            <div className="text-center group relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative bg-slate-900 rounded-2xl p-4 sm:p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-blue-400/50 group-hover:shadow-xl group-hover:shadow-cyan-500/20 border border-slate-800/50">
-                                    <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-sky-500 mb-2 relative">
-                                        5.8K+
-                                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 to-cyan-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full animate-pulse-slow"></div>
-                                    </div>
-                                    <div className="text-xs sm:text-sm font-medium bg-gradient-to-r from-cyan-400/60 to-blue-300/80 text-transparent bg-clip-text group-hover:from-cyan-300 group-hover:to-blue-200 transition-all">
-                                        Docs Created
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Uptime Card */}
-                            <div className="text-center group relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div className="relative bg-slate-900 rounded-2xl p-4 sm:p-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:border-emerald-400/50 group-hover:shadow-xl group-hover:shadow-emerald-500/20 border border-slate-800/50">
-                                    <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-400 to-emerald-500 mb-2 relative">
-                                        99.9%
-                                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 to-emerald-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full animate-pulse-slow"></div>
-                                    </div>
-                                    <div className="text-xs sm:text-sm font-medium bg-gradient-to-r from-emerald-400/60 to-green-300/80 text-transparent bg-clip-text group-hover:from-emerald-300 group-hover:to-green-200 transition-all">
-                                        Uptime
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Features Section */}
-                <section className="py-32 px-6 relative">
-                    <div className="max-w-7xl mx-auto">
-                        {/* Section Header */}
-                        <div className="text-center mb-24">
-                            <h2 className="text-6xl font-black text-white mb-6">
-                                Why developers choose
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600"> GitForje</span>
-                            </h2>
-                            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                                Everything you need to create, maintain, and deploy world-class documentation
-                            </p>
-                        </div>
-
-                        {/* Features Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {features.map((feature, index) => (
-                                <div
-                                    key={index}
-                                    className={`group relative p-8 rounded-3xl backdrop-blur-sm border transition-all duration-700 hover:scale-105 cursor-pointer ${currentFeature === index
-                                        ? 'bg-gradient-to-br from-white/10 to-white/5 border-purple-400/50 shadow-2xl shadow-purple-500/20'
-                                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                                        }`}
-                                >
-                                    {/* Feature Icon */}
-                                    <div className="text-6xl mb-6 text-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
-                                        {feature.icon}
-                                    </div>
-
-                                    {/* Feature Title */}
-                                    <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
-                                        {feature.title}
-                                    </h3>
-
-                                    {/* Feature Description */}
-                                    <p className="text-gray-400 text-center leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
-                                        {feature.desc}
-                                    </p>
-
-                                    {/* Animated Border */}
-                                    {currentFeature === index && (
-                                        <div className="absolute inset-0 rounded-3xl">
-                                            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-400/20 via-transparent to-pink-400/20 animate-pulse"></div>
-                                            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/5 to-transparent animate-ping"></div>
-                                        </div>
-                                    )}
-
-                                    {/* Hover Gradient */}
-                                    <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* CTA Section */}
-                <section className="py-32 px-6 text-center relative">
-                    <div className="max-w-4xl mx-auto">
-                        {/* Background Glow */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/5 to-transparent blur-3xl"></div>
-
+                {/* Enhanced Header */}
+                <header className="flex items-center justify-between p-6 lg:p-8 max-w-8xl mx-auto animate-fade-in-down px-8 lg:px-12">
+                    <div className="flex items-center space-x-3 group">
                         <div className="relative">
-                            <h2 className="text-6xl font-black text-white mb-8 leading-tight">
-                                Ready to revolutionize your
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600"> documentation?</span>
-                            </h2>
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-purple-500/30">
+                                <Code className="w-6 h-6 text-white transition-all duration-300 group-hover:text-purple-400 group-hover:rotate-12" />
+                            </div>
+                            <div className="absolute inset-0 bg-purple-400 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-300 rounded-xl"></div>
+                        </div>
+                    </div>
+                    <div className="text-white text-xl font-bold tracking-wide hover:text-purple-400 transition-colors duration-300 cursor-pointer">
+                        Gitforje
+                    </div>
+                </header>
 
-                            <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto leading-relaxed">
-                                Join thousands of developers who have already transformed their workflow with GitForje
-                            </p>
-
-                            <button
-                                onClick={handleLogin}
-                                className="group relative inline-flex items-center px-16 py-6 text-2xl font-bold text-white bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl border border-gray-600 shadow-2xl transition-all duration-500 hover:scale-110 hover:border-purple-400 hover:shadow-purple-500/25 active:scale-95 overflow-hidden"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
-                                <div className="relative flex items-center">
-                                    <svg className="w-8 h-8 mr-4 transition-transform duration-300 group-hover:rotate-12" fill="currentColor" viewBox="0 0 24 24">
-                                        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" />
-                                    </svg>
-                                    Start Building Today
+                {/* Restructured Hero Section */}
+                <section className="min-h-screen flex items-center px-8 lg:px-12 py-12 mx-8 lg:mx-12">
+                    <div className="max-w-8xl mx-auto w-full">
+                        {/* Main Content Grid */}
+                        <div className="grid grid-cols-1 xl:grid-cols-5 gap-12 lg:gap-16 items-start">
+                            {/* Left Content - 2 columns */}
+                            <div className="xl:col-span-2 space-y-10">
+                                {/* Enhanced Main Headline */}
+                                <div className="space-y-6">
+                                    <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight animate-fade-in-up">
+                                        <span className="text-white animate-text-shimmer block mb-2">Transform your</span>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 animate-gradient-x">
+                                            GitHub repositories
+                                        </span>
+                                    </h1>
+                                    <p className="text-lg md:text-xl lg:text-2xl text-gray-300 font-light animate-fade-in-up animation-delay-200 leading-relaxed">
+                                        Easily generate your project documentation in seconds.
+                                    </p>
                                 </div>
 
-                                {/* Shimmer Effect */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl"></div>
-                            </button>
+                                {/* Enhanced Features List */}
+                                <div className="space-y-5 animate-fade-in-up animation-delay-400">
+                                    {features.map((feature, index) => (
+                                        <div
+                                            key={index}
+                                            className={`flex items-center space-x-4 p-4 rounded-2xl transition-all duration-700 transform hover:translate-x-2 ${currentFeature === index
+                                                ? 'text-white scale-105 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20'
+                                                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'
+                                                }`}
+                                        >
+                                            <div className={`p-3 rounded-xl transition-all duration-700 ${currentFeature === index
+                                                ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-purple-400 shadow-lg shadow-purple-500/25 animate-pulse-glow'
+                                                : 'text-gray-500 hover:bg-gray-700/50'
+                                                }`}>
+                                                {feature.icon}
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="text-lg font-semibold mb-1">{feature.title}</h3>
+                                                <p className="text-sm text-gray-400">{feature.desc}</p>
+                                            </div>
+                                            {currentFeature === index && (
+                                                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
 
-                            <p className="text-sm text-gray-500 mt-6">
-                                No credit card required • 2-minute setup
+                                {/* Enhanced CTA Buttons */}
+                                <div className="flex flex-col sm:flex-row gap-4 pt-6 animate-fade-in-up animation-delay-600">
+                                    <button
+                                        onClick={handleLogin}
+                                        className="group relative px-8 py-4 bg-white text-black font-semibold rounded-xl transition-all duration-500 hover:bg-gray-100 hover:scale-105 hover:shadow-2xl hover:shadow-white/25 active:scale-95 flex items-center justify-center space-x-3 overflow-hidden"
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                                        <Github className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+                                        <span>Start with GitHub</span>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    </button>
+                                    <button
+                                        onClick={handleLogin}
+                                        className="group px-8 py-4 border border-gray-600 text-white font-semibold rounded-xl transition-all duration-500 hover:border-purple-400 hover:bg-purple-500/10 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center space-x-3 relative overflow-hidden"
+                                    >
+                                        <Play className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                                        <span>Demo</span>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-400/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Enhanced GitHub Interface - 3 columns */}
+                            <div className="xl:col-span-3 animate-fade-in-left animation-delay-800">
+                                <div className="bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl shadow-purple-500/5 hover:shadow-purple-500/10 transition-all duration-700 hover:scale-[1.01] group overflow-hidden">
+                                    {/* GitHub Header */}
+                                    <div className="bg-gray-800/80 border-b border-gray-700/50 p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                                                    <Github className="w-4 h-4 text-white" />
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <span className="text-blue-400 hover:underline cursor-pointer text-sm">username</span>
+                                                        <span className="text-gray-400">/</span>
+                                                        <span className="text-white font-semibold">nextjs-auth-app</span>
+                                                        <span className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded-full border border-gray-600">Public</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <button className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
+                                                    <Bell className="w-4 h-4" />
+                                                    <span>Watch</span>
+                                                    <span className="bg-gray-600 px-1.5 py-0.5 rounded text-xs">12</span>
+                                                </button>
+                                                <button className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
+                                                    <Star className="w-4 h-4" />
+                                                    <span>Star</span>
+                                                    <span className="bg-gray-600 px-1.5 py-0.5 rounded text-xs">2.1k</span>
+                                                </button>
+                                                <button className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
+                                                    <GitFork className="w-4 h-4" />
+                                                    <span>Fork</span>
+                                                    <span className="bg-gray-600 px-1.5 py-0.5 rounded text-xs">456</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {/* Repository Description */}
+                                        <div className="mt-3 text-gray-300 text-sm">
+                                            A production-ready Next.js authentication app with TypeScript and Tailwind CSS
+                                        </div>
+                                        {/* Topics */}
+                                        <div className="flex flex-wrap gap-2 mt-3">
+                                            {['nextjs', 'typescript', 'tailwindcss', 'authentication', 'react', 'prisma'].map((topic) => (
+                                                <span key={topic} className="px-2 py-1 bg-blue-900/30 text-blue-300 text-xs rounded-full border border-blue-700/50 hover:bg-blue-800/40 cursor-pointer transition-colors">
+                                                    {topic}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Navigation Tabs */}
+                                    <div className="border-b border-gray-700/50">
+                                        <div className="flex items-center px-4">
+                                            {tabs.map((tab) => (
+                                                <button
+                                                    key={tab.id}
+                                                    onClick={() => setActiveTab(tab.id)}
+                                                    className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ${activeTab === tab.id
+                                                        ? 'border-orange-500 text-white'
+                                                        : 'border-transparent text-gray-400 hover:text-gray-300'
+                                                        }`}
+                                                >
+                                                    <tab.icon className="w-4 h-4" />
+                                                    <span>{tab.label}</span>
+                                                    {tab.count && (
+                                                        <span className="bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded-full text-xs">
+                                                            {tab.count}
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Repository Stats Bar */}
+                                    <div className="bg-gray-800/50 px-4 py-3 border-b border-gray-700/50">
+                                        <div className="flex items-center justify-between text-sm">
+                                            <div className="flex items-center space-x-6">
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                                    <span className="text-gray-300">Latest commit</span>
+                                                    <span className="text-gray-400">2 hours ago</span>
+                                                </div>
+                                                <div className="flex items-center space-x-2 text-gray-400">
+                                                    <GitPullRequest className="w-4 h-4" />
+                                                    <span>3 commits ahead</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center space-x-4 text-gray-400">
+                                                <span>📁 42 files</span>
+                                                <span>📊 Contributors: 12</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* README Content */}
+                                    <div className="p-6 space-y-6">
+                                        {/* README Header */}
+                                        <div className="flex items-center space-x-3 mb-6">
+                                            <BookOpen className="w-5 h-5 text-gray-400" />
+                                            <h2 className="text-xl font-bold text-white">README.md</h2>
+                                        </div>
+
+                                        {/* Project Title and Badges */}
+                                        <div className="space-y-4">
+                                            <h1 className="text-3xl font-bold text-white group-hover:text-purple-400 transition-colors duration-500">
+                                                🚀 Next.js Authentication App
+                                            </h1>
+                                            <div className="flex flex-wrap gap-2 mb-6">
+                                                <span className="px-2 py-1 bg-green-600 text-white text-xs rounded font-medium">Build Passing</span>
+                                                <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-medium">Next.js 14.0.0</span>
+                                                <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded font-medium">TypeScript</span>
+                                                <span className="px-2 py-1 bg-cyan-500 text-white text-xs rounded font-medium">Tailwind CSS</span>
+                                                <span className="px-2 py-1 bg-gray-600 text-white text-xs rounded font-medium">MIT License</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Animated Description */}
+                                        <div className="animate-fade-in animation-delay-2000">
+                                            <p className="text-gray-300 leading-relaxed text-base">
+                                                {typedText}
+                                                <span className={`${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity duration-100 text-purple-400`}>|</span>
+                                            </p>
+                                        </div>
+
+                                        {/* Features Grid */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in animation-delay-2500">
+                                            {[
+                                                { icon: '🔐', title: 'NextAuth.js', desc: 'Complete authentication solution' },
+                                                { icon: '🎨', title: 'Tailwind CSS', desc: 'Utility-first CSS framework' },
+                                                { icon: '📱', title: 'Responsive', desc: 'Mobile-first design approach' },
+                                                { icon: '⚡', title: 'Fast', desc: 'Optimized for performance' }
+                                            ].map((feature, index) => (
+                                                <div key={feature.title} className={`flex items-center space-x-3 p-3 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors animate-slide-in-right`} style={{ animationDelay: `${2.7 + index * 0.1}s` }}>
+                                                    <span className="text-2xl">{feature.icon}</span>
+                                                    <div>
+                                                        <h4 className="text-white font-medium">{feature.title}</h4>
+                                                        <p className="text-gray-400 text-sm">{feature.desc}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Installation Section */}
+                                        <div className="animate-fade-in animation-delay-3000">
+                                            <h3 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
+                                                <Cpu className="w-5 h-5 text-green-400" />
+                                                <span>🚀 Quick Start</span>
+                                            </h3>
+                                            <div className="bg-gray-800/80 rounded-xl p-4 font-mono text-sm border border-gray-700/50">
+                                                {codeLines.map((line, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`flex items-center space-x-3 py-2 transition-all duration-500 ${currentCodeLine === index
+                                                            ? 'text-green-400 bg-green-400/10 px-3 rounded-lg border-l-2 border-green-400'
+                                                            : 'text-gray-400'
+                                                            }`}
+                                                    >
+                                                        <span className="text-gray-600 select-none w-4">$</span>
+                                                        <span className="flex-1">{line}</span>
+                                                        {currentCodeLine === index && (
+                                                            <div className="w-2 h-4 bg-green-400 animate-pulse rounded"></div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Project Structure */}
+                                        <div className="animate-fade-in animation-delay-3500">
+                                            <h3 className="text-lg font-semibold text-white mb-3">📁 Project Structure</h3>
+                                            <div className="bg-gray-800/50 rounded-lg p-4 font-mono text-sm">
+                                                <div className="space-y-1 text-gray-300">
+                                                    <div>📦 nextjs-auth-app</div>
+                                                    <div className="ml-4">├── 📁 app/</div>
+                                                    <div className="ml-8">├── 📄 layout.tsx</div>
+                                                    <div className="ml-8">├── 📄 page.tsx</div>
+                                                    <div className="ml-8">└── 📁 api/</div>
+                                                    <div className="ml-4">├── 📁 components/</div>
+                                                    <div className="ml-4">├── 📁 lib/</div>
+                                                    <div className="ml-4">├── 📄 package.json</div>
+                                                    <div className="ml-4">└── 📄 tailwind.config.js</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Enhanced Stats Section */}
+                <section className="py-24 px-8 lg:px-12" ref={statsRef}>
+                    <div className="max-w-8xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                                Trusted by developers worldwide
+                            </h2>
+                            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                                Join thousands of developers who have already transformed their documentation workflow
                             </p>
                         </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                            {/* Developers Stat */}
+                            <div className="group relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 transition-all duration-700 hover:scale-105 hover:border-purple-400/50 hover:shadow-2xl hover:shadow-purple-500/10">
+                                    <div className="flex items-center justify-center mb-6">
+                                        <div className="p-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl">
+                                            <Users className="w-8 h-8 text-purple-400 animate-pulse-glow" />
+                                        </div>
+                                    </div>
+                                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2 font-mono text-center">
+                                        {animatedStats.developers.toLocaleString()}+
+                                    </div>
+                                    <div className="text-gray-400 font-medium text-center text-lg">Developers</div>
+                                    <div className="mt-6 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+                                </div>
+                            </div>
+
+                            {/* Docs Created Stat */}
+                            <div className="group relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 transition-all duration-700 hover:scale-105 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10">
+                                    <div className="flex items-center justify-center mb-6">
+                                        <div className="p-4 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl">
+                                            <FileText className="w-8 h-8 text-blue-400 animate-pulse-glow" />
+                                        </div>
+                                    </div>
+                                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2 font-mono text-center">
+                                        {animatedStats.docs.toLocaleString()}+
+                                    </div>
+                                    <div className="text-gray-400 font-medium text-center text-lg">Docs Created</div>
+                                    <div className="mt-6 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+                                </div>
+                            </div>
+
+                            {/* Uptime Stat */}
+                            <div className="group relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 transition-all duration-700 hover:scale-105 hover:border-green-400/50 hover:shadow-2xl hover:shadow-green-500/10">
+                                    <div className="flex items-center justify-center mb-6">
+                                        <div className="p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl">
+                                            <TrendingUp className="w-8 h-8 text-green-400 animate-pulse-glow" />
+                                        </div>
+                                    </div>
+                                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mb-2 font-mono text-center">
+                                        {animatedStats.uptime.toFixed(1)}%
+                                    </div>
+                                    <div className="text-gray-400 font-medium text-center text-lg">Uptime</div>
+                                    <div className="mt-6 h-1 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Enhanced Final CTA */}
+                <section className="py-24 px-8 lg:px-12 text-center relative">
+                    <div className="max-w-4xl mx-auto space-y-8 relative">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white animate-fade-in-up">
+                            Ready to get started?
+                        </h2>
+                        <p className="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in-up animation-delay-200 leading-relaxed">
+                            Join thousands of developers who have already transformed their workflow with Gitforje
+                        </p>
+                        <div className="animate-fade-in-up animation-delay-400">
+                            <button
+                                onClick={handleLogin}
+                                className="group relative inline-flex items-center px-12 py-5 bg-white text-black font-bold text-lg rounded-2xl transition-all duration-500 hover:bg-gray-100 hover:scale-110 hover:shadow-2xl hover:shadow-white/25 active:scale-95 space-x-3 overflow-hidden"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                                <Github className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
+                                <span>Start Building Today</span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            </button>
+                        </div>
+                        <p className="text-sm text-gray-500 animate-fade-in-up animation-delay-600">
+                            No credit card required • 2-minute setup
+                        </p>
                     </div>
                 </section>
             </div>
 
-            {/* Custom Styles */}
+            {/* Enhanced Custom Styles */}
             <style jsx>{`
                 @keyframes float {
                     0%, 100% { transform: translateY(0px) rotate(0deg); }
                     33% { transform: translateY(-20px) rotate(2deg); }
                     66% { transform: translateY(-10px) rotate(-2deg); }
                 }
-
+                
+                @keyframes bounce-slow {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-10px); }
+                }
+                
+                @keyframes pulse-slow {
+                    0%, 100% { opacity: 0.6; }
+                    50% { opacity: 1; }
+                }
+                
+                @keyframes pulse-glow {
+                    0%, 100% {
+                        opacity: 0.8;
+                        box-shadow: 0 0 5px currentColor;
+                    }
+                    50% {
+                        opacity: 1;
+                        box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+                    }
+                }
+                
+                @keyframes gradient-x {
+                    0%, 100% {
+                        background-size: 200% 200%;
+                        background-position: left center;
+                    }
+                    50% {
+                        background-size: 200% 200%;
+                        background-position: right center;
+                    }
+                }
+                
+                @keyframes text-shimmer {
+                    0% { background-position: -200% center; }
+                    100% { background-position: 200% center; }
+                }
+                
+                @keyframes expand-width {
+                    from { width: 0; }
+                    to { width: 100%; }
+                }
+                
+                @keyframes expand-width-slow {
+                    from { width: 0; }
+                    to { width: var(--target-width, 100%); }
+                }
+                
                 @keyframes fade-in-up {
                     from {
                         opacity: 0;
@@ -429,31 +745,98 @@ export default function LoginPage() {
                         transform: translateY(0);
                     }
                 }
-
+                
+                @keyframes fade-in-down {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-40px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes fade-in-left {
+                    from {
+                        opacity: 0;
+                        transform: translateX(40px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes slide-in-right {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes fade-in {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                .animate-float { animation: float 6s ease-in-out infinite; }
+                .animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+                .animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
+                .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+                .animate-gradient-x { animation: gradient-x 3s ease infinite; }
+                .animate-text-shimmer {
+                    background: linear-gradient(90deg, #ffffff 0%, #a855f7 50%, #ffffff 100%);
+                    background-size: 200% 100%;
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    animation: text-shimmer 3s ease-in-out infinite;
+                }
+                .animate-expand-width { animation: expand-width 1s ease-out; }
+                .animate-expand-width-slow { animation: expand-width-slow 2s ease-out; }
                 .animate-fade-in-up {
                     animation: fade-in-up 0.8s ease-out forwards;
                     opacity: 0;
                 }
-
-                .animation-delay-200 {
-                    animation-delay: 0.2s;
+                .animate-fade-in-down {
+                    animation: fade-in-down 0.8s ease-out forwards;
+                    opacity: 0;
                 }
-
-                .animation-delay-400 {
-                    animation-delay: 0.4s;
+                .animate-fade-in-left {
+                    animation: fade-in-left 0.8s ease-out forwards;
+                    opacity: 0;
                 }
-
-                .animation-delay-600 {
-                    animation-delay: 0.6s;
+                .animate-slide-in-right {
+                    animation: slide-in-right 0.6s ease-out forwards;
+                    opacity: 0;
                 }
-
-                .animation-delay-800 {
-                    animation-delay: 0.8s;
+                .animate-fade-in {
+                    animation: fade-in 0.6s ease-out forwards;
+                    opacity: 0;
                 }
-
-                .animation-delay-1000 {
-                    animation-delay: 1s;
-                }
+                
+                .animation-delay-200 { animation-delay: 0.2s; }
+                .animation-delay-300 { animation-delay: 0.3s; }
+                .animation-delay-400 { animation-delay: 0.4s; }
+                .animation-delay-500 { animation-delay: 0.5s; }
+                .animation-delay-600 { animation-delay: 0.6s; }
+                .animation-delay-800 { animation-delay: 0.8s; }
+                .animation-delay-1000 { animation-delay: 1s; }
+                .animation-delay-1200 { animation-delay: 1.2s; }
+                .animation-delay-1400 { animation-delay: 1.4s; }
+                .animation-delay-1600 { animation-delay: 1.6s; }
+                .animation-delay-1800 { animation-delay: 1.8s; }
+                .animation-delay-2000 { animation-delay: 2s; }
+                .animation-delay-2500 { animation-delay: 2.5s; }
+                .animation-delay-3000 { animation-delay: 3s; }
+                .animation-delay-3500 { animation-delay: 3.5s; }
+                .animation-delay-4000 { animation-delay: 4s; }
+                .animation-delay-5000 { animation-delay: 5s; }
+                .animation-delay-5200 { animation-delay: 5.2s; }
             `}</style>
         </div>
     );
