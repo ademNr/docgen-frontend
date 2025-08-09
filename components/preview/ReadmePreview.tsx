@@ -7,7 +7,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
     return (
         <div className="max-w-5xl mx-auto  dark:border-slate-800 ">
             {/* GitHub-style header with enhanced dark mode */}
-            <div className=" bg-gray-50 dark:bg-slate-900 px-6 py-4">
+            <div className="  dark:bg-slate-900 px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
@@ -42,12 +42,12 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }}
             >
                 {/* Title */}
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4  pb-2">
+                <h1 className="text-3xl font-bold  dark:text-slate-100 mb-4  pb-2">
                     {documentation.title}
                 </h1>
 
                 {/* Tagline */}
-                <blockquote className="border-l-4 border-gray-300 dark:border-slate-600 pl-4 mb-6 text-gray-600 dark:text-slate-400 italic text-lg">
+                <blockquote className="border-l-4 border-gray-300 dark:border-slate-600 pl-4 mb-6  dark:text-slate-400 italic text-lg">
                     {documentation.tagline}
                 </blockquote>
 
@@ -65,7 +65,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* Description */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         📝 Description
                     </h2>
                     <p className="text-gray-700 dark:text-slate-300 leading-relaxed text-base">{documentation.description}</p>
@@ -73,7 +73,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* Features */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         ✨ Features
                     </h2>
                     <ul className="list-disc pl-6 space-y-2">
@@ -87,7 +87,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* Tech Stack */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         🛠️ Tech Stack
                     </h2>
                     <ul className="list-disc pl-6 space-y-2">
@@ -101,10 +101,10 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* Installation */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         ⚙️ Installation
                     </h2>
-                    <h3 className="text-lg font-medium mb-3 text-gray-800 dark:text-slate-200">Requirements</h3>
+                    <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Requirements</h3>
                     <ul className="list-disc pl-6 space-y-1 mb-6">
                         {documentation.installation.requirements.map((req, i) => (
                             <li key={i} className="text-gray-700 dark:text-slate-300">
@@ -112,25 +112,25 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                             </li>
                         ))}
                     </ul>
-                    <h3 className="text-lg font-medium mb-3 text-gray-800 dark:text-slate-200">Steps</h3>
+                    <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Steps</h3>
                     <ol className="space-y-4">
                         {documentation.installation.steps.map((step, i) => (
                             <li key={i} className="text-gray-700 dark:text-slate-300">
                                 <div className="flex">
-                                    <span className="font-semibold mr-2 text-gray-900 dark:text-slate-100">{i + 1}.</span>
+                                    <span className="font-semibold mr-2  dark:text-slate-100">{i + 1}.</span>
                                     <div className="flex-1">
                                         {step.includes(":") ? (
                                             <>
                                                 <span>{step.split(":")[0]}:</span>
-                                                <div className="mt-2 bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-3">
-                                                    <code className="text-sm text-gray-900 dark:text-slate-200 font-mono">
+                                                <div className="mt-2  dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-3">
+                                                    <code className="text-sm  dark:text-slate-200 font-mono">
                                                         {step.split(":").slice(1).join(":").trim()}
                                                     </code>
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-3">
-                                                <code className="text-sm text-gray-900 dark:text-slate-200 font-mono">{step}</code>
+                                            <div className=" dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-3">
+                                                <code className="text-sm  dark:text-slate-200 font-mono">{step}</code>
                                             </div>
                                         )}
                                     </div>
