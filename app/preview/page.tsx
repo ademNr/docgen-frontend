@@ -127,7 +127,7 @@ function PreviewPageContent() {
     if (error) return <ErrorView error={error} />
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900" onMouseMove={handleMouseMove}>
+        <div className="min-h-screen  dark:bg-gray-900" onMouseMove={handleMouseMove}>
 
 
 
@@ -160,7 +160,7 @@ const PreviewPage = () => {
         <ProtectedRoute>
             <Suspense
                 fallback={
-                    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                    <div className="min-h-screen  dark:bg-gray-900 flex items-center justify-center">
                         <div className="text-center space-y-4">
                             <div className="w-8 h-8 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
                             <div className="text-gray-900 dark:text-white text-lg font-medium">Loading repository information...</div>
