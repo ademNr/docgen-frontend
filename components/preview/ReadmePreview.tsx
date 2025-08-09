@@ -11,9 +11,9 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                            <CodeBracketIcon className="h-5 w-5 text-gray-600 dark:text-slate-400" />
-                            <span className="text-sm font-medium text-gray-700 dark:text-slate-300">username</span>
-                            <span className="text-gray-400 dark:text-slate-500">/</span>
+                            <CodeBracketIcon className="h-5 w-5  dark:text-slate-400" />
+                            <span className="text-sm font-medium  dark:text-slate-300">username</span>
+                            <span className=" dark:text-slate-500">/</span>
                             <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                                 {documentation.title.toLowerCase().replace(/\s+/g, "-")}
                             </span>
@@ -26,12 +26,12 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
             </div>
 
             {/* File navigation bar with enhanced dark mode */}
-            <div className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900 px-6 py-2">
+            <div className="border-b border-gray-200 dark:border-slate-800  dark:bg-slate-900 px-6 py-2">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 text-sm">
-                        <span className="text-gray-600 dark:text-slate-400">📁 files</span>
-                        <span className="text-gray-400 dark:text-slate-500">•</span>
-                        <span className="text-gray-600 dark:text-slate-400">README.md</span>
+                        <span className=" dark:text-slate-400">📁 files</span>
+                        <span className=" dark:text-slate-500">•</span>
+                        <span className=" dark:text-slate-400">README.md</span>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                     <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         📝 Description
                     </h2>
-                    <p className="text-gray-700 dark:text-slate-300 leading-relaxed text-base">{documentation.description}</p>
+                    <p className=" dark:text-slate-300 leading-relaxed text-base">{documentation.description}</p>
                 </div>
 
                 {/* Features */}
@@ -78,7 +78,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                     </h2>
                     <ul className="list-disc pl-6 space-y-2">
                         {documentation.features.map((feature, index) => (
-                            <li key={index} className="text-gray-700 dark:text-slate-300 leading-relaxed">
+                            <li key={index} className=" dark:text-slate-300 leading-relaxed">
                                 {feature}
                             </li>
                         ))}
@@ -92,7 +92,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                     </h2>
                     <ul className="list-disc pl-6 space-y-2">
                         {documentation.techStack.map((tech, index) => (
-                            <li key={index} className="text-gray-700 dark:text-slate-300 leading-relaxed">
+                            <li key={index} className=" dark:text-slate-300 leading-relaxed">
                                 {tech.name}
                             </li>
                         ))}
@@ -107,7 +107,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                     <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Requirements</h3>
                     <ul className="list-disc pl-6 space-y-1 mb-6">
                         {documentation.installation.requirements.map((req, i) => (
-                            <li key={i} className="text-gray-700 dark:text-slate-300">
+                            <li key={i} className=" dark:text-slate-300">
                                 {req}
                             </li>
                         ))}
@@ -115,21 +115,21 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                     <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Steps</h3>
                     <ol className="space-y-4">
                         {documentation.installation.steps.map((step, i) => (
-                            <li key={i} className="text-gray-700 dark:text-slate-300">
+                            <li key={i} className=" dark:text-slate-300">
                                 <div className="flex">
                                     <span className="font-semibold mr-2  dark:text-slate-100">{i + 1}.</span>
                                     <div className="flex-1">
                                         {step.includes(":") ? (
                                             <>
                                                 <span>{step.split(":")[0]}:</span>
-                                                <div className="mt-2  dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-3">
+                                                <div className="mt-2  dark:bg-slate-800/80 border  dark:border-slate-700 rounded-md p-3">
                                                     <code className="text-sm  dark:text-slate-200 font-mono">
                                                         {step.split(":").slice(1).join(":").trim()}
                                                     </code>
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className=" dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-3">
+                                            <div className=" dark:bg-slate-800/80 border  dark:border-slate-700 rounded-md p-3">
                                                 <code className="text-sm  dark:text-slate-200 font-mono">{step}</code>
                                             </div>
                                         )}
@@ -146,7 +146,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                         🚀 Usage
                     </h2>
                     <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Basic</h3>
-                    <div className="bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4 mb-6">
+                    <div className=" dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4 mb-6">
                         <pre className="text-sm  dark:text-slate-200 font-mono overflow-x-auto">
                             <code>{documentation.usage.basic}</code>
                         </pre>
@@ -235,7 +235,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                     </h2>
                     <div className="space-y-3">
                         {documentation.fileStructure.map((file, index) => (
-                            <div key={index} className="flex items-start text-blue-800 dark:text-blue-400">
+                            <div key={index} className="flex items-start dark:text-slate-100">
                                 <span className=" dark:text-slate-500 mr-3 mt-1">•</span>
                                 <div>
                                     <code className=" dark:bg-slate-800/80 px-2 py-1 rounded text-sm font-mono">
