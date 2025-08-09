@@ -142,31 +142,31 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* Usage */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         🚀 Usage
                     </h2>
-                    <h3 className="text-lg font-medium mb-3 text-gray-800 dark:text-slate-200">Basic</h3>
+                    <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Basic</h3>
                     <div className="bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4 mb-6">
-                        <pre className="text-sm text-gray-900 dark:text-slate-200 font-mono overflow-x-auto">
+                        <pre className="text-sm  dark:text-slate-200 font-mono overflow-x-auto">
                             <code>{documentation.usage.basic}</code>
                         </pre>
                     </div>
-                    <h3 className="text-lg font-medium mb-3 text-gray-800 dark:text-slate-200">Advanced</h3>
+                    <h3 className="text-lg font-medium mb-3  dark:text-slate-200">Advanced</h3>
                     <div className="space-y-4">
                         {documentation.usage.advanced.split("\n\n").map((block, i) => (
                             <div key={i}>
                                 {block.includes(":") ? (
                                     <>
-                                        <p className="text-gray-700 dark:text-slate-300 mb-2">{block.split(":")[0]}:</p>
-                                        <div className="bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4">
-                                            <pre className="text-sm text-gray-900 dark:text-slate-200 font-mono overflow-x-auto">
+                                        <p className=" dark:text-slate-300 mb-2">{block.split(":")[0]}:</p>
+                                        <div className=" dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4">
+                                            <pre className="text-sm  dark:text-slate-200 font-mono overflow-x-auto">
                                                 <code>{block.split(":").slice(1).join(":").trim()}</code>
                                             </pre>
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4">
-                                        <pre className="text-sm text-gray-900 dark:text-slate-200 font-mono overflow-x-auto">
+                                    <div className=" dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4">
+                                        <pre className="text-sm  dark:text-slate-200 font-mono overflow-x-auto">
                                             <code>{block}</code>
                                         </pre>
                                     </div>
@@ -179,28 +179,28 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                 {/* API Reference */}
                 {documentation.api && documentation.api.length > 0 && (
                     <div className="mb-8">
-                        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                        <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                             🌐 API Reference
                         </h2>
                         <div className="space-y-8">
                             {documentation.api.map((endpoint, index) => (
                                 <div key={index} className="border-l-4 border-blue-500 dark:border-blue-400 pl-4">
-                                    <h3 className="text-lg font-medium mb-3 text-gray-900 dark:text-slate-100">
-                                        <code className="bg-gray-100 dark:bg-slate-800/80 px-2 py-1 rounded text-sm">
+                                    <h3 className="text-lg font-medium mb-3  dark:text-slate-100">
+                                        <code className=" dark:bg-slate-800/80 px-2 py-1 rounded text-sm">
                                             {endpoint.method} {endpoint.endpoint}
                                         </code>
                                     </h3>
-                                    <p className="text-gray-700 dark:text-slate-300 mb-4 leading-relaxed">{endpoint.description}</p>
+                                    <p className=" dark:text-slate-300 mb-4 leading-relaxed">{endpoint.description}</p>
                                     {endpoint.parameters && endpoint.parameters.length > 0 && (
                                         <div className="mb-4">
-                                            <h4 className="font-medium mb-2 text-gray-900 dark:text-slate-100">Parameters:</h4>
+                                            <h4 className="font-medium mb-2  dark:text-slate-100">Parameters:</h4>
                                             <ul className="list-disc pl-6 space-y-1">
                                                 {endpoint.parameters.map((param, i) => (
-                                                    <li key={i} className="text-gray-700 dark:text-slate-300">
-                                                        <code className="bg-gray-100 dark:bg-slate-800/80 px-1.5 py-0.5 rounded text-sm">
+                                                    <li key={i} className=" dark:text-slate-300">
+                                                        <code className=" dark:bg-slate-800/80 px-1.5 py-0.5 rounded text-sm">
                                                             {param.name}
                                                         </code>
-                                                        <span className="text-gray-500 dark:text-slate-400 text-sm ml-1">({param.type})</span>
+                                                        <span className=" dark:text-slate-400 text-sm ml-1">({param.type})</span>
                                                         {param.required && (
                                                             <span className="text-red-600 dark:text-red-400 ml-1 text-sm font-medium">
                                                                 [required]
@@ -214,9 +214,9 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                                     )}
                                     {endpoint.example && (
                                         <div>
-                                            <h4 className="font-medium mb-2 text-gray-900 dark:text-slate-100">Example:</h4>
-                                            <div className="bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4">
-                                                <pre className="text-sm text-gray-900 dark:text-slate-200 font-mono overflow-x-auto">
+                                            <h4 className="font-medium mb-2  dark:text-slate-100">Example:</h4>
+                                            <div className=" dark:bg-slate-800/80 border border-gray-300 dark:border-slate-700 rounded-md p-4">
+                                                <pre className="text-sm  dark:text-slate-200 font-mono overflow-x-auto">
                                                     <code>{endpoint.example}</code>
                                                 </pre>
                                             </div>
@@ -230,18 +230,18 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* File Structure */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         📂 File Structure
                     </h2>
                     <div className="space-y-3">
                         {documentation.fileStructure.map((file, index) => (
                             <div key={index} className="flex items-start text-blue-800 dark:text-blue-400">
-                                <span className="text-gray-400 dark:text-slate-500 mr-3 mt-1">•</span>
+                                <span className=" dark:text-slate-500 mr-3 mt-1">•</span>
                                 <div>
-                                    <code className="bg-gray-100 dark:bg-slate-800/80 px-2 py-1 rounded text-sm font-mono">
+                                    <code className=" dark:bg-slate-800/80 px-2 py-1 rounded text-sm font-mono">
                                         {file.path}
                                     </code>
-                                    <span className="text-gray-600 dark:text-slate-400 ml-2">: {file.description}</span>
+                                    <span className=" dark:text-slate-400 ml-2">: {file.description}</span>
                                 </div>
                             </div>
                         ))}
@@ -250,44 +250,44 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
 
                 {/* Contributing */}
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-xl font-semibold mb-4  dark:text-slate-100 border-b border-gray-200 dark:border-slate-800 pb-2">
                         🤝 Contributing
                     </h2>
                     <div className="space-y-6">
                         <div>
-                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-slate-200">Setup</h3>
-                            <p className="text-gray-700 dark:text-slate-300 leading-relaxed">{documentation.contributing.setup}</p>
+                            <h3 className="text-lg font-medium mb-2  dark:text-slate-200">Setup</h3>
+                            <p className=" dark:text-slate-300 leading-relaxed">{documentation.contributing.setup}</p>
                         </div>
                         <div>
-                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-slate-200">Guidelines</h3>
-                            <p className="text-gray-700 dark:text-slate-300 leading-relaxed">
+                            <h3 className="text-lg font-medium mb-2  dark:text-slate-200">Guidelines</h3>
+                            <p className=" dark:text-slate-300 leading-relaxed">
                                 {documentation.contributing.guidelines}
                             </p>
                         </div>
                         <div>
-                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-slate-200">Process</h3>
-                            <p className="text-gray-700 dark:text-slate-300 leading-relaxed">{documentation.contributing.process}</p>
+                            <h3 className="text-lg font-medium mb-2  dark:text-slate-200">Process</h3>
+                            <p className=" dark:text-slate-300 leading-relaxed">{documentation.contributing.process}</p>
                         </div>
                     </div>
                 </div>
 
                 {/* License & Author */}
-                <div className="pt-6 border-t border-gray-200 dark:border-slate-800">
+                <div className="pt-6 border-t  dark:border-slate-800">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div className="space-y-2">
                             <div className="flex items-center">
-                                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mr-4">📜 License</h2>
-                                <span className="text-gray-700 dark:text-slate-300">
+                                <h2 className="text-xl font-semibold  dark:text-slate-100 mr-4">📜 License</h2>
+                                <span className=" dark:text-slate-300">
                                     This project is licensed under the {documentation.license} License.
                                 </span>
                             </div>
                             <div className="flex items-center">
-                                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mr-4">👤 Author</h2>
-                                <span className="text-gray-700 dark:text-slate-300">{documentation.author}</span>
+                                <h2 className="text-xl font-semibold  dark:text-slate-100 mr-4">👤 Author</h2>
+                                <span className=" dark:text-slate-300">{documentation.author}</span>
                             </div>
                         </div>
                         <div className="mt-4 md:mt-0">
-                            <p className="text-xs text-gray-500 dark:text-slate-500">Generated with ❤️ by Gitforje</p>
+                            <p className="text-xs  dark:text-slate-500">Generated with ❤️ by Gitforje</p>
                         </div>
                     </div>
                 </div>
