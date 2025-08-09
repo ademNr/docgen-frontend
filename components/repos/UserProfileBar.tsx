@@ -78,7 +78,7 @@ const UserProfileBar = ({ userData, credits, onLogout, isSubscribedLifeTime }: U
                                         <FiGithub className="w-3 h-3 flex-shrink-0" />
                                         <span className="truncate">@{userData.login}</span>
                                         <span className="w-1 h-1 bg-slate-500 rounded-full hidden sm:block" />
-                                        <span className="hidden sm:inline whitespace-nowrap">{userData.public_repos} repos</span>
+                                        <span className="hidden sm:inline whitespace-nowrap">{userData.public_repos} public repos</span>
                                     </div>
                                 </div>
                             </>
