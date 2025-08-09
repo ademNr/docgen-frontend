@@ -19,7 +19,7 @@ export default function BestPracticesView({ data }: { data: BestPractices }) {
                                 <span>Strengths</span>
                             </h3>
                             <p className="text-green-100 mt-2 text-sm">
-                                What you're doing well
+                                What you&apos;re doing well
                             </p>
                         </div>
                         <div className="p-6">
