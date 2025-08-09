@@ -241,7 +241,7 @@ export default function ReadmePreview({ documentation }: { documentation: Docume
                                     <code className=" dark:bg-slate-800/80 px-2 py-1 rounded text-sm font-mono">
                                         {file.path}
                                     </code>
-                                    <span className=" dark:text-slate-400 ml-2">: {file.description}</span>
+                                    <span className=" dark:text-slate-600 ml-2">: {file.description}</span>
                                 </div>
                             </div>
                         ))}
