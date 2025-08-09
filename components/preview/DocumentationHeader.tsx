@@ -1,11 +1,14 @@
-import React from 'react';
+"use client"
+
+import type React from "react"
+import { FileText, Copy, Download, ArrowLeft, Check } from "lucide-react"
 
 interface DocumentationHeaderProps {
-    repoFullName: string | null;
-    copySuccess: boolean;
-    downloadProgress: number;
-    onCopy: () => void;
-    onDownload: () => void;
+    repoFullName: string | null
+    copySuccess: boolean
+    downloadProgress: number
+    onCopy: () => void
+    onDownload: () => void
 }
 
 const DocumentationHeader: React.FC<DocumentationHeaderProps> = ({
@@ -13,98 +16,86 @@ const DocumentationHeader: React.FC<DocumentationHeaderProps> = ({
     copySuccess,
     downloadProgress,
     onCopy,
-    onDownload
+    onDownload,
 }) => (
-    <div className="fixed top-0 left-0 right-0 z-30 backdrop-blur-md border-b border-white/10 bg-slate-900/80 py-3 sm:py-4 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+    <header className=" top-0 left-0 right-0 z-30 dark:bg-gray-900 backdrop-blur-xl   ">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                {/* Modern logo section */}
+                <div className="flex items-center space-x-4">
+                    <div className="relative">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                            <FileText className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-slate-900"></div>
+                    </div>
+                    <div>
+                        <h1 className="text-lg font-semibold text-slate-100 tracking-tight">Documentation Preview</h1>
+                        <p className="text-sm text-slate-400 truncate max-w-[200px] sm:max-w-md font-medium">
+                            {repoFullName || "Loading repository..."}
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-base sm:text-lg font-bold text-white">Documentation Preview</h1>
-                    <p className="text-xs sm:text-sm text-slate-300 truncate max-w-[180px] sm:max-w-md">
-                        {repoFullName}
-                    </p>
-                </div>
-            </div>
 
-            <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto justify-end">
-                <button
-                    onClick={onCopy}
-                    className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm"
-                    style={{
-                        background: copySuccess
-                            ? 'linear-gradient(45deg, #10b981, #059669)'
-                            : 'linear-gradient(45deg, #0ea5e9, #0284c7)',
-                    }}
-                >
-                    <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
+                {/* Enhanced action buttons */}
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                    <button
+                        onClick={onCopy}
+                        className={`inline-flex items-center px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${copySuccess
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10"
+                            : "bg-slate-800/80 text-slate-300 border border-slate-700/50 hover:bg-slate-700/80 hover:text-slate-200 hover:border-slate-600/50"
+                            }`}
+                    >
                         {copySuccess ? (
                             <>
-                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Copied!</span>
+                                <Check className="w-4 h-4 mr-2" />
+                                <span className="hidden sm:inline">Copied!</span>
                             </>
                         ) : (
                             <>
-                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
+                                <Copy className="w-4 h-4 mr-2" />
                                 <span className="hidden sm:inline">Copy README</span>
                                 <span className="sm:hidden">Copy</span>
                             </>
                         )}
-                    </div>
+                    </button>
 
-                </button>
-
-                <button
-                    onClick={onDownload}
-                    disabled={downloadProgress > 0 && downloadProgress < 100}
-                    className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm disabled:opacity-70"
-                    style={{
-                        background: 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
-                    }}
-                >
-                    <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
+                    <button
+                        onClick={onDownload}
+                        disabled={downloadProgress > 0 && downloadProgress < 100}
+                        className="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden"
+                    >
                         {downloadProgress > 0 && downloadProgress < 100 ? (
                             <>
-                                <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                <span>{downloadProgress}%</span>
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                                <span className="hidden sm:inline">{downloadProgress}%</span>
                             </>
                         ) : (
                             <>
-                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
+                                <Download className="w-4 h-4 mr-2" />
                                 <span className="hidden sm:inline">Download</span>
                                 <span className="sm:hidden">DL</span>
                             </>
                         )}
-                    </div>
-                </button>
+                        {downloadProgress > 0 && downloadProgress < 100 && (
+                            <div
+                                className="absolute bottom-0 left-0 h-0.5 bg-white/40 transition-all duration-300"
+                                style={{ width: `${downloadProgress}%` }}
+                            />
+                        )}
+                    </button>
 
-                <a
-                    href="/repos"
-                    className="group relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium text-white transition-all duration-300 hover:scale-105 overflow-hidden text-sm"
-                    style={{
-                        background: 'linear-gradient(45deg, #475569, #334155)',
-                    }}
-                >
-                    <div className="flex items-center space-x-1 sm:space-x-2 relative z-10">
-                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
+                    <a
+                        href="/repos"
+                        className="inline-flex items-center px-4 py-2.5 text-sm font-medium text-slate-300 bg-slate-800/80 border border-slate-700/50 rounded-xl hover:bg-slate-700/80 hover:text-slate-200 hover:border-slate-600/50 transition-all duration-200 hover:scale-105 active:scale-95"
+                    >
+                        <ArrowLeft className="w-4 h-4 mr-2" />
                         <span>Back</span>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-);
+    </header>
+)
 
-export default DocumentationHeader;
+export default DocumentationHeader

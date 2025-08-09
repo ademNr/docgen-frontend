@@ -1,60 +1,123 @@
-// components/BestPractices.tsx
-import { BestPractices } from "../../types/bestPractices";
+import type { BestPractices } from "../../types/bestPractices"
+import { TrendingUp, CheckCircle, AlertTriangle, Target } from "lucide-react";
 
 export default function BestPracticesView({ data }: { data: BestPractices }) {
+
+
     return (
-        <div className="p-6">
-            <div className="mb-8">
-                <h2 className="text-xl font-bold text-white mb-4">Best Practices Analysis</h2>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-6">
+            <div className="max-w-6xl mx-auto space-y-8">
 
-                <div className="bg-slate-800/50 rounded-xl p-5 mb-6">
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-white">Overall Score</h3>
-                        <span className="text-xl font-bold text-white bg-gradient-to-r from-cyan-500 to-indigo-500 px-3 py-1 rounded-full">
-                            {data.score}/100
-                        </span>
-                    </div>
-                    <p className="text-slate-300">{data.summary}</p>
-                </div>
-                <div className="bg-slate-800/50 rounded-xl p-5">
-                    <h3 className="font-bold text-white mb-3">Improvement Areas</h3>
-                    <div className="space-y-4">
-                        {data.improvements.map((area, i) => (
-                            <div key={i}>
-                                <h4 className="font-bold text-cyan-400 mb-1">{area.category}</h4>
-                                <ul className="space-y-1">
-                                    {area.suggestions.map((suggestion, j) => (
-                                        <li key={j} className="flex items-start">
-                                            <svg className="w-4 h-4 text-yellow-400 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span className="text-slate-300">{suggestion}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+
+                    {/* Strengths Card */}
+                    <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-gray-700/50 shadow-sm overflow-hidden">
+                        <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-6">
+                            <h3 className="text-xl font-semibold text-white flex items-center space-x-3">
+                                <CheckCircle className="w-6 h-6" />
+                                <span>Strengths</span>
+                            </h3>
+                            <p className="text-green-100 mt-2 text-sm">
+                                What you're doing well
+                            </p>
+                        </div>
+                        <div className="p-6">
+                            <div className="space-y-4">
+                                {data.strengths.map((strength, i) => (
+                                    <div key={i} className="flex items-start space-x-4 group">
+                                        <div className="w-8 h-8 bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-green-900/50 transition-colors">
+                                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                        </div>
+                                        <p className="text-gray-300 leading-relaxed">{strength}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
+                    </div>
+
+                    {/* Improvements Card */}
+                    <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-gray-700/50 shadow-sm overflow-hidden">
+                        <div className="bg-gradient-to-r from-amber-500 to-orange-600 p-6">
+                            <h3 className="text-xl font-semibold text-white flex items-center space-x-3">
+                                <AlertTriangle className="w-6 h-6" />
+                                <span>Areas for Improvement</span>
+                            </h3>
+                            <p className="text-amber-100 mt-2 text-sm">
+                                Opportunities to enhance your project
+                            </p>
+                        </div>
+                        <div className="p-6">
+                            <div className="space-y-6">
+                                {data.improvements.map((area, i) => (
+                                    <div key={i} className="space-y-3">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-6 h-6 bg-amber-900/30 rounded-lg flex items-center justify-center">
+                                                <span className="text-xs font-medium text-amber-300">
+                                                    {i + 1}
+                                                </span>
+                                            </div>
+                                            <h4 className="font-semibold text-amber-300">{area.category}</h4>
+                                        </div>
+                                        <div className="space-y-2 ml-8">
+                                            {area.suggestions.map((suggestion, j) => (
+                                                <div key={j} className="flex items-start space-x-3">
+                                                    <div className="w-1.5 h-1.5 bg-amber-400 rounded-full mt-2.5 flex-shrink-0"></div>
+                                                    <p className="text-gray-400 text-sm leading-relaxed">{suggestion}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
-              
-            </div>
 
-            <div className="bg-slate-800/50 rounded-xl p-5">
-                <h3 className="font-bold text-white mb-3">Key Recommendations</h3>
-                <ol className="space-y-3">
-                    {data.improvements.flatMap(area =>
-                        area.suggestions.map((suggestion, j) => (
-                            <li key={`${area.category}-${j}`} className="flex">
-                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center mr-3">
-                                    {j + 1}
-                                </span>
-                                <span className="text-slate-300">
-                                    <span className="font-bold text-cyan-300">[{area.category}]</span> {suggestion}
-                                </span>
-                            </li>
-                        ))
-                    )}
-                </ol>
+                {/* Priority Recommendations */}
+                <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-gray-700/50 shadow-sm overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
+                        <h3 className="text-xl font-semibold text-white flex items-center space-x-3">
+                            <Target className="w-6 h-6" />
+                            <span>Priority Recommendations</span>
+                        </h3>
+                        <p className="text-blue-100 mt-2 text-sm">
+                            Actionable steps ranked by impact
+                        </p>
+                    </div>
+                    <div className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {data.improvements.flatMap((area, areaIndex) =>
+                                area.suggestions.map((suggestion, suggestionIndex) => {
+                                    const itemNumber = areaIndex * area.suggestions.length + suggestionIndex + 1;
+                                    return (
+                                        <div
+                                            key={`${area.category}-${suggestionIndex}`}
+                                            className="group p-4 bg-gray-700/50 rounded-xl border border-gray-600/30 hover:bg-blue-900/20 hover:border-blue-700 transition-all duration-200"
+                                        >
+                                            <div className="flex items-start space-x-3">
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center flex-shrink-0 text-sm font-medium shadow-sm">
+                                                    {itemNumber}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="inline-flex items-center px-2 py-1 bg-blue-900/30 rounded-md mb-2">
+                                                        <span className="font-medium text-blue-300 text-xs">
+                                                            {area.category}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-gray-300 text-sm leading-relaxed">
+                                                        {suggestion}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

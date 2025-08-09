@@ -1,42 +1,40 @@
-import React, { memo } from 'react';
-import { Documentation } from '@/types/documentation';
-import ReadmePreview from './ReadmePreview';
-import BestPracticesView from './BestPractices';
-import DocNavigation from './DocNavigation';
+"use client"
+
+import type React from "react"
+import { memo } from "react"
+import type { Documentation } from "@/types/documentation"
+import ReadmePreview from "./ReadmePreview"
+import BestPracticesView from "./BestPractices"
+import DocNavigation from "./DocNavigation"
 
 interface DocumentationViewProps {
-    documentation: Documentation;
-    activeTab: string;
-    setActiveTab: (tab: string) => void;
+    documentation: Documentation
+    activeTab: string
+    setActiveTab: (tab: string) => void
 }
 
-const DocumentationView: React.FC<DocumentationViewProps> = memo(({
-    documentation,
-    activeTab,
-    setActiveTab
-}) => (
-    <div className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-xl overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-slate-700/50">
-            <div className="flex flex-col gap-3 sm:gap-4">
+const DocumentationView: React.FC<DocumentationViewProps> = memo(({ documentation, activeTab, setActiveTab }) => (
+    <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800/50 overflow-hidden">
+        {/* Enhanced header with darker colors */}
+        <div className="p-6 border-b border-slate-800/50 bg-slate-900/80">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">
-                        {documentation.title || "Project Documentation"}
-                    </h1>
-                    <p className="text-sm sm:text-base text-slate-300">
-                        {documentation.tagline || "AI-generated documentation"}
-                    </p>
+                    <h1 className="text-2xl font-bold text-slate-100 mb-2">{documentation.title || "Project Documentation"}</h1>
+                    <p className="text-slate-400">{documentation.tagline || "AI-generated documentation"}</p>
                 </div>
+
+                {/* Enhanced badges with darker theme */}
                 <div className="flex flex-wrap gap-2">
                     {documentation.badges.slice(0, 3).map((badge, index) => (
                         <span
                             key={index}
-                            className="px-2 py-1 text-xs font-medium rounded-md bg-slate-700/50"
+                            className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30"
                         >
                             {badge.label}
                         </span>
                     ))}
                     {documentation.badges.length > 3 && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-md bg-slate-700/50">
+                        <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-slate-700/50 text-slate-300 border border-slate-600/50">
                             +{documentation.badges.length - 3}
                         </span>
                     )}
@@ -44,41 +42,47 @@ const DocumentationView: React.FC<DocumentationViewProps> = memo(({
             </div>
         </div>
 
-        <div className="flex flex-col md:flex-row min-h-[calc(100vh-200px)]">
-            <div className="md:hidden p-3 border-b border-slate-700/50">
+        {/* Content area with darker theme */}
+        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-200px)]">
+            {/* Mobile tab selector */}
+            <div className="lg:hidden p-4 border-b border-slate-800/50 bg-slate-900/30">
                 <select
                     value={activeTab}
                     onChange={(e) => setActiveTab(e.target.value)}
-                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white"
+                    className="w-full bg-slate-800/80 border border-slate-700/50 rounded-xl p-3 text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 >
-                    <option value="readme">README</option>
+                    <option value="readme">README Preview</option>
                     <option value="bestPractices">Best Practices</option>
                 </select>
             </div>
 
-            <div className="hidden md:block">
-                <DocNavigation
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                    bestPractices={documentation.bestPractices}
-                />
+            {/* Desktop navigation */}
+            <div className="hidden lg:block">
+                <DocNavigation activeTab={activeTab} setActiveTab={setActiveTab} bestPractices={documentation.bestPractices} />
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                {activeTab === 'readme' ? (
+            {/* Main content */}
+            <div className="flex-1 overflow-y-auto">
+                {activeTab === "readme" ? (
                     <ReadmePreview documentation={documentation} />
+                ) : documentation.bestPractices ? (
+                    <BestPracticesView data={documentation.bestPractices} />
                 ) : (
-                    documentation.bestPractices ? (
-                        <BestPracticesView data={documentation.bestPractices} />
-                    ) : (
-                        <div className="flex justify-center items-center h-full">
-                            <p className="text-slate-400">No best practices analysis available</p>
+                    <div className="flex flex-col items-center justify-center h-64 space-y-4 p-8">
+                        <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center">
+                            <span className="text-2xl">📊</span>
                         </div>
-                    )
+                        <p className="text-slate-300 text-lg font-medium">No best practices analysis available</p>
+                        <p className="text-slate-500 text-sm text-center max-w-md">
+                            Best practices analysis will be available once the documentation is fully processed.
+                        </p>
+                    </div>
                 )}
             </div>
         </div>
     </div>
-));
-DocumentationView.displayName = 'DocumentationView';
-export default DocumentationView;
+))
+
+DocumentationView.displayName = "DocumentationView"
+
+export default DocumentationView

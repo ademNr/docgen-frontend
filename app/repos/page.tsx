@@ -68,7 +68,7 @@ export default function ReposPage() {
 
     return (
         <div
-            className="min-h-screen bg-slate-900 overflow-x-hidden"
+            className="min-h-screen dark:bg-gray-900 overflow-x-hidden"
             onMouseMove={handleMouseMove}
         >
 
