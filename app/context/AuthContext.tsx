@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('userId');
         setToken(null);
         setUserId(null);
-        router.push('/login');
+        router.push('/');
     }, [router]);
 
     const saveToken = useCallback((newToken: string, newUserId: string) => {

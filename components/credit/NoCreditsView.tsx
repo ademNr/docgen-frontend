@@ -78,7 +78,7 @@ const PaymentPage = () => {
     // Redirect if not authenticated
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
-            window.location.href = '/login';
+            window.location.href = '/';
         }
     }, [isAuthenticated, isLoading]);
 
