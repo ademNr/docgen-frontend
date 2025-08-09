@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+/* Force dark mode as default */
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background-color: #111827;
+}
+
+body {
+  background-color: #111827;
+  color: white;
+}
+
+/* Ensure dark mode persists */
+.dark {
+  color-scheme: dark;
+}
