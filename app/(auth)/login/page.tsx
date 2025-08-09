@@ -336,7 +336,7 @@ export default function LoginPage() {
                                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight animate-fade-in-up">
                                         <span className="text-white animate-text-shimmer block mb-2">Transform your</span>
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 animate-gradient-x">
-                                            GitHub repositories
+                                            repositories
                                         </span>
                                     </h1>
                                     <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-light animate-fade-in-up animation-delay-200 leading-relaxed">
