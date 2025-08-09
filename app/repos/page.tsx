@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
-import AnimatedBackground from '@/components/repos/AnimatedBackground';
+
 import UserProfileBar from '@/components/repos/UserProfileBar';
 import SearchFilter from '@/components/repos/SearchFilter';
 import RepoCard from '@/components/repos/RepoCard';
@@ -71,7 +71,7 @@ export default function ReposPage() {
             className="min-h-screen bg-slate-900 overflow-x-hidden"
             onMouseMove={handleMouseMove}
         >
-            <AnimatedBackground />
+
 
             {/* Dynamic Background Orbs */}
             <div className="fixed inset-0 z-10 pointer-events-none">

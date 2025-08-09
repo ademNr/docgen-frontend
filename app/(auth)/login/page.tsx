@@ -44,19 +44,19 @@ export default function LoginPage() {
 
     const features = [
         {
-            icon: <Zap className="w-8 h-8" />,
+            icon: <Zap className="w-6 h-6 sm:w-8 sm:h-8" />,
             title: "Lightning Fast",
             desc: "Generate comprehensive documentation in seconds, not hours",
             gradient: "from-yellow-400 to-orange-500"
         },
         {
-            icon: <Palette className="w-8 h-8" />,
+            icon: <Palette className="w-6 h-6 sm:w-8 sm:h-8" />,
             title: "Beautiful Design",
             desc: "Stunning, responsive layouts that make your docs shine",
             gradient: "from-pink-400 to-rose-500"
         },
         {
-            icon: <Brain className="w-8 h-8" />,
+            icon: <Brain className="w-6 h-6 sm:w-8 sm:h-8" />,
             title: "Smart content generation",
             desc: "AI-powered content that understands your codebase",
             gradient: "from-blue-400 to-indigo-500"
@@ -134,7 +134,7 @@ export default function LoginPage() {
                     }, 30);
                 }
             },
-            { threshold: 0.1 } // Lowered threshold from 0.5 to 0.1
+            { threshold: 0.1 }
         );
 
         if (statsRef.current) {
@@ -310,58 +310,58 @@ export default function LoginPage() {
             {/* Main Content */}
             <div className="relative z-20">
                 {/* Enhanced Header */}
-                <header className="flex items-center justify-between p-6 lg:p-8 max-w-8xl mx-auto animate-fade-in-down px-8 lg:px-12">
+                <header className="flex items-center justify-between p-4 sm:p-6 lg:p-8 max-w-8xl mx-auto animate-fade-in-down px-4 sm:px-8 lg:px-12">
                     <div className="flex items-center space-x-3 group">
                         <div className="relative">
                             <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-purple-500/30">
-                                <Code className="w-6 h-6 text-white transition-all duration-300 group-hover:text-purple-400 group-hover:rotate-12" />
+                                <Code className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-all duration-300 group-hover:text-purple-400 group-hover:rotate-12" />
                             </div>
                             <div className="absolute inset-0 bg-purple-400 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-300 rounded-xl"></div>
                         </div>
                     </div>
-                    <div className="text-white text-xl font-bold tracking-wide hover:text-purple-400 transition-colors duration-300 cursor-pointer">
-                        Gitforje
+                    <div className="text-white text-lg sm:text-xl font-bold tracking-wide hover:text-purple-400 transition-colors duration-300 cursor-pointer">
+                        GitForje
                     </div>
                 </header>
 
                 {/* Restructured Hero Section */}
-                <section className="min-h-screen flex items-center px-8 lg:px-12 py-12 mx-8 lg:mx-12">
+                <section className="min-h-screen flex items-center px-4 sm:px-8 lg:px-12 py-12 mx-4 sm:mx-8 lg:mx-12">
                     <div className="max-w-8xl mx-auto w-full">
                         {/* Main Content Grid */}
-                        <div className="grid grid-cols-1 xl:grid-cols-5 gap-12 lg:gap-16 items-start">
+                        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8 lg:gap-12 xl:gap-16 items-start">
                             {/* Left Content - 2 columns */}
-                            <div className="xl:col-span-2 space-y-10">
+                            <div className="xl:col-span-2 space-y-8 lg:space-y-10">
                                 {/* Enhanced Main Headline */}
-                                <div className="space-y-6">
-                                    <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight animate-fade-in-up">
+                                <div className="space-y-4 sm:space-y-6">
+                                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight animate-fade-in-up">
                                         <span className="text-white animate-text-shimmer block mb-2">Transform your</span>
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 animate-gradient-x">
                                             GitHub repositories
                                         </span>
                                     </h1>
-                                    <p className="text-lg md:text-xl lg:text-2xl text-gray-300 font-light animate-fade-in-up animation-delay-200 leading-relaxed">
+                                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-light animate-fade-in-up animation-delay-200 leading-relaxed">
                                         Easily generate your project documentation in seconds.
                                     </p>
                                 </div>
 
                                 {/* Enhanced Features List */}
-                                <div className="space-y-5 animate-fade-in-up animation-delay-400">
+                                <div className="space-y-4 sm:space-y-5 animate-fade-in-up animation-delay-400">
                                     {features.map((feature, index) => (
                                         <div
                                             key={index}
-                                            className={`flex items-center space-x-4 p-4 rounded-2xl transition-all duration-700 transform hover:translate-x-2 ${currentFeature === index
+                                            className={`flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-2xl transition-all duration-700 transform hover:translate-x-2 ${currentFeature === index
                                                 ? 'text-white scale-105 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20'
                                                 : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'
                                                 }`}
                                         >
-                                            <div className={`p-3 rounded-xl transition-all duration-700 ${currentFeature === index
+                                            <div className={`p-2 sm:p-3 rounded-xl transition-all duration-700 ${currentFeature === index
                                                 ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-purple-400 shadow-lg shadow-purple-500/25 animate-pulse-glow'
                                                 : 'text-gray-500 hover:bg-gray-700/50'
                                                 }`}>
                                                 {feature.icon}
                                             </div>
                                             <div className="flex-1">
-                                                <h3 className="text-lg font-semibold mb-1">{feature.title}</h3>
+                                                <h3 className="text-sm sm:text-base font-semibold mb-1">{feature.title}</h3>
                                                 <p className="text-sm text-gray-400">{feature.desc}</p>
                                             </div>
                                             {currentFeature === index && (
@@ -375,69 +375,69 @@ export default function LoginPage() {
                                 <div className="flex flex-col sm:flex-row gap-4 pt-6 animate-fade-in-up animation-delay-600">
                                     <button
                                         onClick={handleLogin}
-                                        className="group relative px-8 py-4 bg-white text-black font-semibold rounded-xl transition-all duration-500 hover:bg-gray-100 hover:scale-105 hover:shadow-2xl hover:shadow-white/25 active:scale-95 flex items-center justify-center space-x-3 overflow-hidden"
+                                        className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-semibold rounded-xl transition-all duration-500 hover:bg-gray-100 hover:scale-105 hover:shadow-2xl hover:shadow-white/25 active:scale-95 flex items-center justify-center space-x-3 overflow-hidden"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
-                                        <Github className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
-                                        <span>Start with GitHub</span>
+                                        <Github className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:rotate-12" />
+                                        <span className="text-sm sm:text-base">Start with GitHub</span>
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                                     </button>
                                     <button
                                         onClick={handleLogin}
-                                        className="group px-8 py-4 border border-gray-600 text-white font-semibold rounded-xl transition-all duration-500 hover:border-purple-400 hover:bg-purple-500/10 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center space-x-3 relative overflow-hidden"
+                                        className="group px-6 sm:px-8 py-3 sm:py-4 border border-gray-600 text-white font-semibold rounded-xl transition-all duration-500 hover:border-purple-400 hover:bg-purple-500/10 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center space-x-3 relative overflow-hidden"
                                     >
-                                        <Play className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                                        <span>Demo</span>
+                                        <Play className="w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:scale-110" />
+                                        <span className="text-sm sm:text-base">View Demo</span>
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-400/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                                     </button>
                                 </div>
                             </div>
 
                             {/* Enhanced GitHub Interface - 3 columns */}
-                            <div className="xl:col-span-3 animate-fade-in-left animation-delay-800">
+                            <div className="xl:col-span-3 animate-fade-in-left animation-delay-800 mt-8 xl:mt-0">
                                 <div className="bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl shadow-purple-500/5 hover:shadow-purple-500/10 transition-all duration-700 hover:scale-[1.01] group overflow-hidden">
                                     {/* GitHub Header */}
-                                    <div className="bg-gray-800/80 border-b border-gray-700/50 p-4">
+                                    <div className="bg-gray-800/80 border-b border-gray-700/50 p-3 sm:p-4">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-3">
-                                                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                                                    <Github className="w-4 h-4 text-white" />
+                                            <div className="flex items-center space-x-2 sm:space-x-3">
+                                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                                                    <Github className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                                                 </div>
                                                 <div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <span className="text-blue-400 hover:underline cursor-pointer text-sm">username</span>
+                                                    <div className="flex items-center space-x-1 sm:space-x-2">
+                                                        <span className="text-blue-400 hover:underline cursor-pointer text-xs sm:text-sm">username</span>
                                                         <span className="text-gray-400">/</span>
-                                                        <span className="text-white font-semibold">nextjs-auth-app</span>
-                                                        <span className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded-full border border-gray-600">Public</span>
+                                                        <span className="text-white font-semibold text-xs sm:text-sm">nextjs-auth-app</span>
+                                                        <span className="px-1.5 py-0.5 sm:px-2 bg-gray-700 text-gray-300 text-xs rounded-full border border-gray-600">Public</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center space-x-2">
-                                                <button className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
-                                                    <Bell className="w-4 h-4" />
-                                                    <span>Watch</span>
-                                                    <span className="bg-gray-600 px-1.5 py-0.5 rounded text-xs">12</span>
+                                            <div className="hidden sm:flex items-center space-x-2">
+                                                <button className="flex items-center space-x-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-sm rounded-lg transition-colors">
+                                                    <Bell className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                    <span className="hidden sm:inline">Watch</span>
+                                                    <span className="bg-gray-600 px-1 sm:px-1.5 py-0.5 rounded text-xs">12</span>
                                                 </button>
-                                                <button className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
-                                                    <Star className="w-4 h-4" />
-                                                    <span>Star</span>
-                                                    <span className="bg-gray-600 px-1.5 py-0.5 rounded text-xs">2.1k</span>
+                                                <button className="flex items-center space-x-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-sm rounded-lg transition-colors">
+                                                    <Star className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                    <span className="hidden sm:inline">Star</span>
+                                                    <span className="bg-gray-600 px-1 sm:px-1.5 py-0.5 rounded text-xs">2.1k</span>
                                                 </button>
-                                                <button className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
-                                                    <GitFork className="w-4 h-4" />
-                                                    <span>Fork</span>
-                                                    <span className="bg-gray-600 px-1.5 py-0.5 rounded text-xs">456</span>
+                                                <button className="flex items-center space-x-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-sm rounded-lg transition-colors">
+                                                    <GitFork className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                    <span className="hidden sm:inline">Fork</span>
+                                                    <span className="bg-gray-600 px-1 sm:px-1.5 py-0.5 rounded text-xs">456</span>
                                                 </button>
                                             </div>
                                         </div>
                                         {/* Repository Description */}
-                                        <div className="mt-3 text-gray-300 text-sm">
+                                        <div className="mt-2 sm:mt-3 text-gray-300 text-xs sm:text-sm">
                                             A production-ready Next.js authentication app with TypeScript and Tailwind CSS
                                         </div>
                                         {/* Topics */}
-                                        <div className="flex flex-wrap gap-2 mt-3">
+                                        <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-3">
                                             {['nextjs', 'typescript', 'tailwindcss', 'authentication', 'react', 'prisma'].map((topic) => (
-                                                <span key={topic} className="px-2 py-1 bg-blue-900/30 text-blue-300 text-xs rounded-full border border-blue-700/50 hover:bg-blue-800/40 cursor-pointer transition-colors">
+                                                <span key={topic} className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-900/30 text-blue-300 text-xs rounded-full border border-blue-700/50 hover:bg-blue-800/40 cursor-pointer transition-colors">
                                                     {topic}
                                                 </span>
                                             ))}
@@ -446,20 +446,20 @@ export default function LoginPage() {
 
                                     {/* Navigation Tabs */}
                                     <div className="border-b border-gray-700/50">
-                                        <div className="flex items-center px-4">
+                                        <div className="flex items-center px-3 sm:px-4 overflow-x-auto">
                                             {tabs.map((tab) => (
                                                 <button
                                                     key={tab.id}
                                                     onClick={() => setActiveTab(tab.id)}
-                                                    className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-all duration-300 ${activeTab === tab.id
+                                                    className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-all duration-300 whitespace-nowrap ${activeTab === tab.id
                                                         ? 'border-orange-500 text-white'
                                                         : 'border-transparent text-gray-400 hover:text-gray-300'
                                                         }`}
                                                 >
-                                                    <tab.icon className="w-4 h-4" />
+                                                    <tab.icon className="w-3 h-3 sm:w-4 sm:h-4" />
                                                     <span>{tab.label}</span>
                                                     {tab.count && (
-                                                        <span className="bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded-full text-xs">
+                                                        <span className="bg-gray-700 text-gray-300 px-1 sm:px-1.5 py-0.5 rounded-full text-xs">
                                                             {tab.count}
                                                         </span>
                                                     )}
@@ -469,69 +469,69 @@ export default function LoginPage() {
                                     </div>
 
                                     {/* Repository Stats Bar */}
-                                    <div className="bg-gray-800/50 px-4 py-3 border-b border-gray-700/50">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <div className="flex items-center space-x-6">
-                                                <div className="flex items-center space-x-2">
-                                                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                    <div className="bg-gray-800/50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700/50">
+                                        <div className="flex items-center justify-between text-xs sm:text-sm">
+                                            <div className="flex items-center space-x-3 sm:space-x-6">
+                                                <div className="flex items-center space-x-1 sm:space-x-2">
+                                                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></div>
                                                     <span className="text-gray-300">Latest commit</span>
-                                                    <span className="text-gray-400">2 hours ago</span>
+                                                    <span className="text-gray-400 hidden sm:inline">2 hours ago</span>
                                                 </div>
-                                                <div className="flex items-center space-x-2 text-gray-400">
-                                                    <GitPullRequest className="w-4 h-4" />
-                                                    <span>3 commits ahead</span>
+                                                <div className="flex items-center space-x-1 sm:space-x-2 text-gray-400">
+                                                    <GitPullRequest className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                    <span className="hidden sm:inline">3 commits ahead</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center space-x-4 text-gray-400">
-                                                <span>📁 42 files</span>
-                                                <span>📊 Contributors: 12</span>
+                                            <div className="flex items-center space-x-2 sm:space-x-4 text-gray-400 text-xs">
+                                                <span>📁 42</span>
+                                                <span className="hidden sm:inline">📊 Contributors: 12</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* README Content */}
-                                    <div className="p-6 space-y-6">
+                                    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                                         {/* README Header */}
-                                        <div className="flex items-center space-x-3 mb-6">
-                                            <BookOpen className="w-5 h-5 text-gray-400" />
-                                            <h2 className="text-xl font-bold text-white">README.md</h2>
+                                        <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+                                            <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                                            <h2 className="text-lg sm:text-xl font-bold text-white">README.md</h2>
                                         </div>
 
                                         {/* Project Title and Badges */}
-                                        <div className="space-y-4">
-                                            <h1 className="text-3xl font-bold text-white group-hover:text-purple-400 transition-colors duration-500">
+                                        <div className="space-y-3 sm:space-y-4">
+                                            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-purple-400 transition-colors duration-500">
                                                 🚀 Next.js Authentication App
                                             </h1>
-                                            <div className="flex flex-wrap gap-2 mb-6">
-                                                <span className="px-2 py-1 bg-green-600 text-white text-xs rounded font-medium">Build Passing</span>
-                                                <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-medium">Next.js 14.0.0</span>
-                                                <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded font-medium">TypeScript</span>
-                                                <span className="px-2 py-1 bg-cyan-500 text-white text-xs rounded font-medium">Tailwind CSS</span>
-                                                <span className="px-2 py-1 bg-gray-600 text-white text-xs rounded font-medium">MIT License</span>
+                                            <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 sm:mb-6">
+                                                <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-green-600 text-white text-xs rounded font-medium">Build Passing</span>
+                                                <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-600 text-white text-xs rounded font-medium">Next.js 14.0.0</span>
+                                                <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-500 text-white text-xs rounded font-medium">TypeScript</span>
+                                                <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-cyan-500 text-white text-xs rounded font-medium">Tailwind CSS</span>
+                                                <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-600 text-white text-xs rounded font-medium">MIT License</span>
                                             </div>
                                         </div>
 
                                         {/* Animated Description */}
                                         <div className="animate-fade-in animation-delay-2000">
-                                            <p className="text-gray-300 leading-relaxed text-base">
+                                            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
                                                 {typedText}
                                                 <span className={`${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity duration-100 text-purple-400`}>|</span>
                                             </p>
                                         </div>
 
                                         {/* Features Grid */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in animation-delay-2500">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 animate-fade-in animation-delay-2500">
                                             {[
                                                 { icon: '🔐', title: 'NextAuth.js', desc: 'Complete authentication solution' },
                                                 { icon: '🎨', title: 'Tailwind CSS', desc: 'Utility-first CSS framework' },
                                                 { icon: '📱', title: 'Responsive', desc: 'Mobile-first design approach' },
                                                 { icon: '⚡', title: 'Fast', desc: 'Optimized for performance' }
                                             ].map((feature, index) => (
-                                                <div key={feature.title} className={`flex items-center space-x-3 p-3 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors animate-slide-in-right`} style={{ animationDelay: `${2.7 + index * 0.1}s` }}>
-                                                    <span className="text-2xl">{feature.icon}</span>
+                                                <div key={feature.title} className={`flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors animate-slide-in-right`} style={{ animationDelay: `${2.7 + index * 0.1}s` }}>
+                                                    <span className="text-lg sm:text-2xl">{feature.icon}</span>
                                                     <div>
-                                                        <h4 className="text-white font-medium">{feature.title}</h4>
-                                                        <p className="text-gray-400 text-sm">{feature.desc}</p>
+                                                        <h4 className="text-white font-medium text-sm sm:text-base">{feature.title}</h4>
+                                                        <p className="text-gray-400 text-xs sm:text-sm">{feature.desc}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -539,23 +539,23 @@ export default function LoginPage() {
 
                                         {/* Installation Section */}
                                         <div className="animate-fade-in animation-delay-3000">
-                                            <h3 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
-                                                <Cpu className="w-5 h-5 text-green-400" />
+                                            <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-3 flex items-center space-x-2">
+                                                <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
                                                 <span>🚀 Quick Start</span>
                                             </h3>
-                                            <div className="bg-gray-800/80 rounded-xl p-4 font-mono text-sm border border-gray-700/50">
+                                            <div className="bg-gray-800/80 rounded-xl p-3 sm:p-4 font-mono text-xs sm:text-sm border border-gray-700/50 overflow-x-auto">
                                                 {codeLines.map((line, index) => (
                                                     <div
                                                         key={index}
-                                                        className={`flex items-center space-x-3 py-2 transition-all duration-500 ${currentCodeLine === index
-                                                            ? 'text-green-400 bg-green-400/10 px-3 rounded-lg border-l-2 border-green-400'
+                                                        className={`flex items-center space-x-2 sm:space-x-3 py-1 sm:py-2 transition-all duration-500 ${currentCodeLine === index
+                                                            ? 'text-green-400 bg-green-400/10 px-2 sm:px-3 rounded-lg border-l-2 border-green-400'
                                                             : 'text-gray-400'
                                                             }`}
                                                     >
-                                                        <span className="text-gray-600 select-none w-4">$</span>
-                                                        <span className="flex-1">{line}</span>
+                                                        <span className="text-gray-600 select-none w-3 sm:w-4">$</span>
+                                                        <span className="flex-1 whitespace-nowrap">{line}</span>
                                                         {currentCodeLine === index && (
-                                                            <div className="w-2 h-4 bg-green-400 animate-pulse rounded"></div>
+                                                            <div className="w-1.5 h-3 sm:w-2 sm:h-4 bg-green-400 animate-pulse rounded"></div>
                                                         )}
                                                     </div>
                                                 ))}
@@ -564,23 +564,22 @@ export default function LoginPage() {
 
                                         {/* Project Structure */}
                                         <div className="animate-fade-in animation-delay-3500">
-                                            <h3 className="text-lg font-semibold text-white mb-3">📁 Project Structure</h3>
-                                            <div className="bg-gray-800/50 rounded-lg p-4 font-mono text-sm">
+                                            <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-3">📁 Project Structure</h3>
+                                            <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm">
                                                 <div className="space-y-1 text-gray-300">
                                                     <div>📦 nextjs-auth-app</div>
-                                                    <div className="ml-4">├── 📁 app/</div>
-                                                    <div className="ml-8">├── 📄 layout.tsx</div>
-                                                    <div className="ml-8">├── 📄 page.tsx</div>
-                                                    <div className="ml-8">└── 📁 api/</div>
-                                                    <div className="ml-4">├── 📁 components/</div>
-                                                    <div className="ml-4">├── 📁 lib/</div>
-                                                    <div className="ml-4">├── 📄 package.json</div>
-                                                    <div className="ml-4">└── 📄 tailwind.config.js</div>
+                                                    <div className="ml-3 sm:ml-4">├── 📁 app/</div>
+                                                    <div className="ml-6 sm:ml-8">├── 📄 layout.tsx</div>
+                                                    <div className="ml-6 sm:ml-8">├── 📄 page.tsx</div>
+                                                    <div className="ml-6 sm:ml-8">└── 📁 api/</div>
+                                                    <div className="ml-3 sm:ml-4">├── 📁 components/</div>
+                                                    <div className="ml-3 sm:ml-4">├── 📁 lib/</div>
+                                                    <div className="ml-3 sm:ml-4">├── 📄 package.json</div>
+                                                    <div className="ml-3 sm:ml-4">└── 📄 tailwind.config.js</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -588,65 +587,65 @@ export default function LoginPage() {
                 </section>
 
                 {/* Enhanced Stats Section */}
-                <section className="py-24 px-8 lg:px-12" ref={statsRef}>
+                <section className="py-16 sm:py-24 px-4 sm:px-8 lg:px-12" ref={statsRef}>
                     <div className="max-w-8xl mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        <div className="text-center mb-12 sm:mb-16">
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
                                 Trusted by developers worldwide
                             </h2>
-                            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                            <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
                                 Join thousands of developers who have already transformed their documentation workflow
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
                             {/* Developers Stat */}
                             <div className="group relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 transition-all duration-700 hover:scale-105 hover:border-purple-400/50 hover:shadow-2xl hover:shadow-purple-500/10">
-                                    <div className="flex items-center justify-center mb-6">
-                                        <div className="p-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl">
-                                            <Users className="w-8 h-8 text-purple-400 animate-pulse-glow" />
+                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-6 sm:p-8 transition-all duration-700 hover:scale-105 hover:border-purple-400/50 hover:shadow-2xl hover:shadow-purple-500/10">
+                                    <div className="flex items-center justify-center mb-4 sm:mb-6">
+                                        <div className="p-3 sm:p-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl">
+                                            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 animate-pulse-glow" />
                                         </div>
                                     </div>
-                                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2 font-mono text-center">
+                                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2 font-mono text-center">
                                         {animatedStats.developers.toLocaleString()}+
                                     </div>
-                                    <div className="text-gray-400 font-medium text-center text-lg">Developers</div>
-                                    <div className="mt-6 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+                                    <div className="text-gray-400 font-medium text-center text-base sm:text-lg">Developers</div>
+                                    <div className="mt-4 sm:mt-6 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 </div>
                             </div>
 
                             {/* Docs Created Stat */}
                             <div className="group relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 transition-all duration-700 hover:scale-105 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10">
-                                    <div className="flex items-center justify-center mb-6">
-                                        <div className="p-4 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl">
-                                            <FileText className="w-8 h-8 text-blue-400 animate-pulse-glow" />
+                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-6 sm:p-8 transition-all duration-700 hover:scale-105 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10">
+                                    <div className="flex items-center justify-center mb-4 sm:mb-6">
+                                        <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl">
+                                            <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 animate-pulse-glow" />
                                         </div>
                                     </div>
-                                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2 font-mono text-center">
+                                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2 font-mono text-center">
                                         {animatedStats.docs.toLocaleString()}+
                                     </div>
-                                    <div className="text-gray-400 font-medium text-center text-lg">Docs Created</div>
-                                    <div className="mt-6 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+                                    <div className="text-gray-400 font-medium text-center text-base sm:text-lg">Docs Created</div>
+                                    <div className="mt-4 sm:mt-6 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 </div>
                             </div>
 
                             {/* Uptime Stat */}
                             <div className="group relative">
                                 <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 transition-all duration-700 hover:scale-105 hover:border-green-400/50 hover:shadow-2xl hover:shadow-green-500/10">
-                                    <div className="flex items-center justify-center mb-6">
-                                        <div className="p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl">
-                                            <TrendingUp className="w-8 h-8 text-green-400 animate-pulse-glow" />
+                                <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-6 sm:p-8 transition-all duration-700 hover:scale-105 hover:border-green-400/50 hover:shadow-2xl hover:shadow-green-500/10">
+                                    <div className="flex items-center justify-center mb-4 sm:mb-6">
+                                        <div className="p-3 sm:p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl">
+                                            <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-400 animate-pulse-glow" />
                                         </div>
                                     </div>
-                                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mb-2 font-mono text-center">
+                                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mb-2 font-mono text-center">
                                         {animatedStats.uptime.toFixed(1)}%
                                     </div>
-                                    <div className="text-gray-400 font-medium text-center text-lg">Uptime</div>
-                                    <div className="mt-6 h-1 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+                                    <div className="text-gray-400 font-medium text-center text-base sm:text-lg">Uptime</div>
+                                    <div className="mt-4 sm:mt-6 h-1 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 </div>
                             </div>
                         </div>
@@ -654,21 +653,21 @@ export default function LoginPage() {
                 </section>
 
                 {/* Enhanced Final CTA */}
-                <section className="py-24 px-8 lg:px-12 text-center relative">
-                    <div className="max-w-4xl mx-auto space-y-8 relative">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white animate-fade-in-up">
+                <section className="py-16 sm:py-24 px-4 sm:px-8 lg:px-12 text-center relative">
+                    <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white animate-fade-in-up">
                             Ready to get started?
                         </h2>
-                        <p className="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in-up animation-delay-200 leading-relaxed">
-                            Join thousands of developers who have already transformed their workflow with Gitforje
+                        <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto animate-fade-in-up animation-delay-200 leading-relaxed">
+                            Join thousands of developers who have already transformed their workflow with GitForje
                         </p>
                         <div className="animate-fade-in-up animation-delay-400">
                             <button
                                 onClick={handleLogin}
-                                className="group relative inline-flex items-center px-12 py-5 bg-white text-black font-bold text-lg rounded-2xl transition-all duration-500 hover:bg-gray-100 hover:scale-110 hover:shadow-2xl hover:shadow-white/25 active:scale-95 space-x-3 overflow-hidden"
+                                className="group relative inline-flex items-center px-8 sm:px-12 py-4 sm:py-5 bg-white text-black font-bold text-base sm:text-lg rounded-2xl transition-all duration-500 hover:bg-gray-100 hover:scale-110 hover:shadow-2xl hover:shadow-white/25 active:scale-95 space-x-3 overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
-                                <Github className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
+                                <Github className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:rotate-12" />
                                 <span>Start Building Today</span>
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                             </button>

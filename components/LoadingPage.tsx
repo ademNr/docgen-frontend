@@ -1,7 +1,7 @@
-// components/LoadingPage.tsx
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
+import { Code } from 'lucide-react';
 
 interface LoadingPageProps {
     message?: string;
@@ -13,125 +13,111 @@ export default function LoadingPage({
     subMessage = "Fetching your amazing projects..."
 }: LoadingPageProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [particles, setParticles] = useState<Array<{
-        x: number;
-        y: number;
-        vx: number;
-        vy: number;
-        size: number;
-        color: string;
-        opacity: number;
-    }>>([]);
 
-    useEffect(() => {
-        // Initialize particles
-        const newParticles = Array.from({ length: 30 }, () => ({
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            vx: (Math.random() - 0.5) * 2,
-            vy: (Math.random() - 0.5) * 2,
-            size: Math.random() * 3 + 1,
-            color: ['#8b5cf6', '#ec4899', '#06b6d4', '#10b981'][Math.floor(Math.random() * 4)],
-            opacity: Math.random() * 0.5 + 0.1,
-        }));
-        setParticles(newParticles);
-    }, []);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-    // Animate particles
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
 
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach((particle, index) => {
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-
-                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fillStyle = `${particle.color}${Math.floor(particle.opacity * 255).toString(16).padStart(2, '0')}`;
-                ctx.fill();
-
-                // Connect nearby particles
-                particles.forEach((otherParticle, otherIndex) => {
-                    if (index !== otherIndex) {
-                        const dx = particle.x - otherParticle.x;
-                        const dy = particle.y - otherParticle.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-
-                        if (distance < 100) {
-                            ctx.beginPath();
-                            ctx.moveTo(particle.x, particle.y);
-                            ctx.lineTo(otherParticle.x, otherParticle.y);
-                            ctx.strokeStyle = `${particle.color}${Math.floor((1 - distance / 100) * 50).toString(16).padStart(2, '0')}`;
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
-                        }
-                    }
-                });
-            });
-
-            requestAnimationFrame(animate);
-        };
-
-        animate();
-
-        const handleResize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [particles]);
+    const handleMouseMove = (e: React.MouseEvent) => {
+        setMousePos({
+            x: (e.clientX / window.innerWidth) * 2 - 1,
+            y: (e.clientY / window.innerHeight) * 2 - 1,
+        });
+    };
 
     return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden">
-            {/* Particle Background */}
-            <canvas ref={canvasRef} className="absolute inset-0 z-0" />
+        <div
+            className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden"
+            onMouseMove={handleMouseMove}
+        >
 
-            {/* Dynamic Background Orbs */}
-            <div className="absolute inset-0 z-10">
-                <div
-                    className="absolute w-96 h-96 rounded-full opacity-10 blur-3xl"
-                    style={{
-                        background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-                        left: '10%',
-                        top: '10%',
-                    }}
-                />
-                <div
-                    className="absolute w-80 h-80 rounded-full opacity-10 blur-3xl"
-                    style={{
-                        background: 'radial-gradient(circle, #ec4899 0%, transparent 70%)',
-                        right: '10%',
-                        bottom: '10%',
-                    }}
-                />
-            </div>
 
-            {/* Content */}
-            <div className="relative z-20 text-center">
-                <div className="relative">
-                    <div className="w-20 h-20 border-4 border-purple-500/30 rounded-full animate-spin mx-auto mb-8">
-                        <div className="absolute inset-2 border-4 border-pink-500 rounded-full animate-ping"></div>
-                        <div className="absolute inset-4 border-4 border-blue-500 rounded-full animate-pulse"></div>
+            {/* Enhanced Header */}
+            <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4 sm:p-6 lg:p-8 px-4 sm:px-8 lg:px-12 max-w-8xl mx-auto animate-fade-in-down">
+                <div className="flex items-center space-x-3 group">
+                    <div className="relative">
+                        <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-purple-500/30">
+                            <Code className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-all duration-300 group-hover:text-purple-400 group-hover:rotate-12" />
+                        </div>
+                        <div className="absolute inset-0 bg-purple-400 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-300 rounded-xl"></div>
                     </div>
-                    <div className="text-2xl font-bold text-white mb-4">{message}</div>
-                    <div className="text-gray-400">{subMessage}</div>
+                </div>
+                <div className="text-white text-lg sm:text-xl font-bold tracking-wide hover:text-purple-400 transition-colors duration-300 cursor-pointer">
+                    GitForje
+                </div>
+            </header>
+
+            {/* Enhanced Content */}
+            <div className="relative z-20 text-center animate-fade-in-up px-4 sm:px-8">
+                <div className="relative">
+                    {/* Modern Loading Spinner */}
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-8">
+                        {/* Outer ring */}
+                        <div className="absolute inset-0 rounded-full border-2 border-purple-500/20"></div>
+                        {/* Spinning gradient ring */}
+                        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-purple-400 border-r-pink-400 animate-spin"></div>
+                        {/* Inner pulsing dot */}
+                        <div className="absolute inset-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 animate-pulse opacity-60"></div>
+                        {/* Center dot */}
+                        <div className="absolute inset-6 rounded-full bg-white animate-pulse"></div>
+                    </div>
+
+                    {/* Clean Typography */}
+                    <div className="space-y-3">
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
+                            {message}
+                        </h1>
+                        <p className="text-sm sm:text-base text-gray-400 max-w-md mx-auto">
+                            {subMessage}
+                        </p>
+                    </div>
+
+                    {/* Minimal Loading Dots */}
+                    <div className="flex justify-center space-x-1 mt-6">
+                        <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce animation-delay-200"></div>
+                        <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce animation-delay-400"></div>
+                    </div>
                 </div>
             </div>
+
+            {/* Enhanced Custom Styles */}
+            <style jsx>{`
+                @keyframes fade-in-up {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes fade-in-down {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .animate-fade-in-up {
+                    animation: fade-in-up 0.6s ease-out forwards;
+                    opacity: 0;
+                }
+                .animate-fade-in-down {
+                    animation: fade-in-down 0.6s ease-out forwards;
+                    opacity: 0;
+                }
+
+                .animation-delay-200 { animation-delay: 0.2s; }
+                .animation-delay-400 { animation-delay: 0.4s; }
+            `}</style>
         </div>
     );
 }
