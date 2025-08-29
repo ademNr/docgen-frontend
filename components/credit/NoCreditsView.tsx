@@ -311,7 +311,7 @@ const PaymentPage = () => {
                             </button>
 
                             <p className="text-center text-gray-400 text-sm mt-4 px-2">
-                                30-day money-back guarantee • Secure payment via Gumroad
+                                Secure payment via Gumroad
                             </p>
                         </div>
                     </div>
