@@ -381,14 +381,7 @@ export default function Home() {
                     <span className="text-sm sm:text-base">Start with GitHub</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   </button>
-                  <button
-                    onClick={handleLogin}
-                    className="group px-6 sm:px-8 py-3 sm:py-4 border border-gray-600 text-white font-semibold rounded-xl transition-all duration-500 hover:border-purple-400 hover:bg-purple-500/10 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center space-x-3 relative overflow-hidden"
-                  >
-                    <Play className="w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-sm sm:text-base">View Demo</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-400/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                  </button>
+
                 </div>
               </div>
 
