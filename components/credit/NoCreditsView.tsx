@@ -381,42 +381,11 @@ const PaymentPage = () => {
                             ))}
                         </div>
 
-                        {/* Credit Disclaimer */}
-                        <div className="mt-8 text-center text-gray-500 text-sm max-w-2xl mx-auto">
-                            <p className="mb-2">Credits expire after 1 year of inactivity</p>
-                            <p>Lifetime access saves you ${(creditPackages[0].price * 6).toFixed(2)} compared to buying 10 credits monthly</p>
-                        </div>
+
                     </div>
                 )}
 
-                {/* Trust Indicators */}
-                <div className="max-w-4xl mx-auto mt-16">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="text-center group">
-                            <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
-                                <Shield className="w-8 h-8 text-green-400" />
-                            </div>
-                            <h4 className="font-bold text-white mb-2 text-base">Secure Payment</h4>
-                            <p className="text-gray-400 text-sm">SSL encrypted checkout via Gumroad</p>
-                        </div>
 
-                        <div className="text-center group">
-                            <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-indigo-500/30 transition-colors">
-                                <Zap className="w-8 h-8 text-indigo-400" />
-                            </div>
-                            <h4 className="font-bold text-white mb-2 text-base">Instant Access</h4>
-                            <p className="text-gray-400 text-sm">Start generating docs immediately</p>
-                        </div>
-
-                        <div className="text-center group">
-                            <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-500/30 transition-colors">
-                                <CreditCard className="w-8 h-8 text-purple-400" />
-                            </div>
-                            <h4 className="font-bold text-white mb-2 text-base">Money Back Guarantee</h4>
-                            <p className="text-gray-400 text-sm">30 days, no questions asked</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {/* Enhanced Email Verification Popup */}
